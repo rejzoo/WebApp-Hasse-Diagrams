@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, WheelEvent } from 'react';
+import ToggleCell from './ToggleCell';
 
 interface RowData {
   elements: (number | null)[];
@@ -12,6 +13,8 @@ interface TableProps {
 }
 
 export default function InputTable({ numberOfElements }: TableProps) {
+  const [responseMsg, setResponseMsg] = useState('');
+
   const calculateRows = (numElements: number): RowData[] =>
     Array.from({ length: 2 ** numElements }, () => ({
       elements: Array.from({ length: numElements }, () => null),
@@ -38,48 +41,33 @@ export default function InputTable({ numberOfElements }: TableProps) {
 
   const headers = Array.from({ length: numberOfElements }, (_, i) => `X${i + 1}`);
 
-  const ToggleCell = ({
-    currentValue,
-    onSelect,
-  }: {
-    currentValue: number | null;
-    onSelect: (value: number | null) => void;
-  }) => (
-    <div className="flex items-center space-x-2">
-      <button
-        onClick={() => onSelect(0)}
-        className={`w-14 h-10 flex items-center justify-center rounded-md transition-colors text-xl
-          ${
-            currentValue === 0
-              ? 'bg-gray-500 text-white'
-              : 'bg-[var(--itemsbackground)]/20 text-[var(--foreground)] hover:bg-red-500'
-          }`}
-      >0</button>
+  const createFunction = async () => {
+    const finalData = rows.map((row) => ({
+      elements: row.elements.map((val) => (val === null ? 0 : val)),
+      system: row.system === null ? 0 : row.system,
+    }));
+  
+    const jsonData = JSON.stringify(finalData);
+  
+    console.log("Sending data:", jsonData);
+    
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: jsonData
+      });
 
-      <button
-        onClick={() => onSelect(1)}
-        className={`w-14 h-10 flex items-center justify-center rounded-md transition-colors text-xl
-          ${
-            currentValue === 1
-              ? 'bg-gray-500 text-white'
-              : 'bg-[var(--itemsbackground)]/20 text-[var(--foreground)] hover:bg-red-500'
-          }`}
-      >1</button>
-
-      <button
-        onClick={() => onSelect(null)}
-        className={`w-14 h-10 flex items-center justify-center rounded-md transition-colors text-medium 
-          ${
-            currentValue === null
-              ? 'bg-gray-500 text-white'
-              : 'bg-[var(--itemsbackground)]/20 text-[var(--foreground)] hover:bg-red-500'
-          }`}
-      >Clear</button>
-    </div>
-  );
-
-  const createFunction = () => {
-    console.log(rows);
+      const text = await res.text();
+      setResponseMsg(text);
+    } catch (error) {
+      console.error('Error submitting data:', error);
+      setResponseMsg('Error submitting data');
+    }
+    
+    clearValues();
   }
 
   const clearValues = () => {
@@ -108,7 +96,7 @@ export default function InputTable({ numberOfElements }: TableProps) {
               </th>
             </tr>
           </thead>
-          
+
           <tbody>
             {rows.map((row, rowIndex) => (
               <tr
@@ -146,6 +134,7 @@ export default function InputTable({ numberOfElements }: TableProps) {
           Clear All
         </button>
       </div>
+      <p>{responseMsg}</p>
     </>
   );
 }
