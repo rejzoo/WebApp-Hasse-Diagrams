@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, WheelEvent } from 'react';
+import React, { useEffect, useState } from 'react';
 import ToggleCell from './ToggleCell';
 
 interface RowData {
@@ -9,24 +9,43 @@ interface RowData {
 }
 
 interface TableProps {
-    numberOfElements: number;
-    manualInput: boolean;
+  numberOfElements: number;
+  manualInput: boolean;
 }
 
-// TODO Calculate all posib.
+function calculateRows(numElements: number): RowData[] {
+  return Array.from({ length: 2 ** numElements }, () => ({
+    elements: Array.from({ length: numElements }, () => null),
+    system: null,
+  }));
+}
+
+function calculateCombinations(numberOfElements: number) {
+  const total = 2 ** numberOfElements;
+  const combinations = [];
+  
+  for (let i = 0; i < total; i++) {
+    const combo = [];
+    for (let j = numberOfElements - 1; j >= 0; j--) {
+      combo.push((i >> j) & 1);
+    }
+    combinations.push(combo);
+  }
+  return combinations;
+}
+
 export default function InputTable({ numberOfElements, manualInput }: TableProps) {
   const [responseMsg, setResponseMsg] = useState('');
-
-  const calculateRows = (numElements: number): RowData[] =>
-    Array.from({ length: 2 ** numElements }, () => ({
-      elements: Array.from({ length: numElements }, () => null),
-      system: null,
-    }));
-
+  const [combinations, setCombinations] = useState<number[][]>([]);
   const [rows, setRows] = useState<RowData[]>(calculateRows(numberOfElements));
+  const headers = Array.from({ length: numberOfElements }, (_, i) => `X${i + 1}`);
 
   useEffect(() => {
     setRows(calculateRows(numberOfElements));
+
+    // Calculate combinations - maybe move into the backend ?
+    const combos = calculateCombinations(numberOfElements);
+    setCombinations(combos);
   }, [numberOfElements]);
 
   const handleElementClick = (rowIndex: number, colIndex: number, value: number | null) => {
@@ -41,17 +60,15 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
     setRows(newRows);
   };
 
-  const headers = Array.from({ length: numberOfElements }, (_, i) => `X${i + 1}`);
-
   const createFunction = async () => {
-    const finalData = rows.map((row) => ({
-      elements: row.elements.map((val) => (val === null ? 0 : val)),
-      system: row.system === null ? 0 : row.system,
+    const finalData = rows.map((row, index) => ({
+      [`elementsRow${index + 1}`]: row.elements.map(val => (val === null ? 0 : val)),
+      [`systemRow${index + 1}`]: row.system === null ? 0 : row.system
     }));
   
     const jsonData = JSON.stringify(finalData);
   
-    console.log("Sending data:", jsonData);
+    console.log(jsonData);
     
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/create`, {
@@ -119,10 +136,16 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
                       {manualInput ? (
                         <ToggleCell
                           currentValue={value}
-                          onSelect={(val) => handleElementClick(rowIndex, colIndex, val)}
+                          onSelect={(val) =>
+                            handleElementClick(rowIndex, colIndex, val)
+                          }
                         />
                       ) : (
-                        <span>NIC</span>
+                        <span className="text-lg text-[var(--foreground)]">
+                          {combinations[rowIndex]
+                            ? combinations[rowIndex][colIndex]
+                            : ''}
+                        </span>
                       )}
                     </td>
                   ))}
@@ -134,13 +157,20 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
       </div>
 
       <div className="flex items-center justify-center rounded-md transition-colors text-lg pt-5 space-x-5">
-        <button className="w-20 h-10 bg-[var(--itemsbackground)] rounded-md" onClick={createFunction}>
+        <button
+          className="w-20 h-10 bg-[var(--itemsbackground)] rounded-md"
+          onClick={createFunction}
+        >
           Create
         </button>
-        <button className="w-20 h-10 bg-[var(--itemsbackground)] rounded-md" onClick={clearValues}>
+        <button
+          className="w-20 h-10 bg-[var(--itemsbackground)] rounded-md"
+          onClick={clearValues}
+        >
           Clear All
         </button>
       </div>
+
       <p>{responseMsg}</p>
     </>
   );
