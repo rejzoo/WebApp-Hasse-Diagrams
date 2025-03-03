@@ -1,20 +1,24 @@
 package com.hassediagrams.rejzo.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
-@Setter
 public class ElementData {
     private List<Integer> elements;
-    private int system;
+    private Integer system;
 
-    public ElementData() {}
-
-    public ElementData(List<Integer> elements, int system) {
-        this.elements = elements;
-        this.system = system;
+    @JsonCreator
+    public ElementData(Map<String, Object> props) {
+        for (Map.Entry<String, Object> entry : props.entrySet()) {
+            if (entry.getKey().startsWith("elements")) {
+                this.elements = (List<Integer>) entry.getValue();
+            } else if (entry.getKey().startsWith("functional")) {
+                this.system = (Integer) entry.getValue();
+            }
+        }
     }
 }
