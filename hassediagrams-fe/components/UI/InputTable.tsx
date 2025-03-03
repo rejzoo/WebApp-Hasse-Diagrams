@@ -61,10 +61,15 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
   };
 
   const createFunction = async () => {
-    const finalData = rows.map((row, index) => ({
-      [`elementsRow${index + 1}`]: row.elements.map(val => (val === null ? 0 : val)),
-      [`systemRow${index + 1}`]: row.system === null ? 0 : row.system
+    const data = rows.map((row, index) => ({
+      [`elements${index + 1}`]: manualInput ? row.elements.map(val => (val === null ? 0 : val)) : combinations[index],
+      [`functional${index + 1}`]: row.system === null ? 0 : row.system
     }));
+
+    const finalData = {
+      numberOfElements: numberOfElements,
+      data: data
+    };
   
     const jsonData = JSON.stringify(finalData);
   
