@@ -1,23 +1,31 @@
 package com.hassediagrams.rejzo.controller;
 
-import com.hassediagrams.rejzo.dto.ElementData;
+import com.hassediagrams.rejzo.dto.DiagramData;
+import com.hassediagrams.rejzo.dto.ElementDataWrapper;
+import com.hassediagrams.rejzo.service.DiagramService;
+import com.hassediagrams.rejzo.util.DiagramJSONGenerator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/diagrams")
 public class DiagramController {
 
+    private final DiagramService diagramService;
+
+    public DiagramController(DiagramService diagramService) {
+        this.diagramService = diagramService;
+    }
+
     @PostMapping("/create")
-    public ResponseEntity<String> createDiagram(@RequestBody List<ElementData> data) {
+    public ResponseEntity<String> createDiagram(@RequestBody ElementDataWrapper data) {
+        DiagramData diagram = diagramService.createDiagram(data);
 
-        System.out.println(data);
+        String json = DiagramJSONGenerator.generateDiagramJson(diagram);
 
-        return ResponseEntity.ok("API Call went thru");
+        return ResponseEntity.ok("API Called, Result: " + json);
     }
 }
