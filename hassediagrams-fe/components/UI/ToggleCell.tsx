@@ -12,7 +12,7 @@ export default function ToggleCell({ currentValue, onSelect }: ToggleCellProps) 
         <div className="flex items-center space-x-1 w-[180px]">
             <button
                 onClick={() => onSelect(0)}
-                className={`w-${width} h-${height} flex items-center justify-center rounded-md transition-colors text-xl
+                className={`w-14 h-10 flex items-center justify-center rounded-md transition-colors text-xl
                 ${
                     currentValue === 0
                     ? 'bg-gray-500 text-white'
@@ -22,7 +22,7 @@ export default function ToggleCell({ currentValue, onSelect }: ToggleCellProps) 
 
             <button
                 onClick={() => onSelect(1)}
-                className={`w-${width} h-${height} flex items-center justify-center rounded-md transition-colors text-xl
+                className={`w-14 h-10 flex items-center justify-center rounded-md transition-colors text-xl
                 ${
                     currentValue === 1
                     ? 'bg-gray-500 text-white'
@@ -33,7 +33,7 @@ export default function ToggleCell({ currentValue, onSelect }: ToggleCellProps) 
             { currentValue !== null &&
                 <button
                     onClick={() => onSelect(null)}
-                    className={`w-${width} h-${height} flex items-center justify-center rounded-md transition-colors text-medium 
+                    className={`w-14 h-10 flex items-center justify-center rounded-md transition-colors text-medium 
                     ${
                         currentValue === null
                         ? 'bg-gray-500 text-white'
