@@ -15,3 +15,9 @@ export interface DiagramData {
     nodes: NodeData[];
     edges: EdgeData[];
 }
+
+export interface Diagram {
+    diagram_id: number;
+    user_id: number;
+    diagram: DiagramData;
+  }
