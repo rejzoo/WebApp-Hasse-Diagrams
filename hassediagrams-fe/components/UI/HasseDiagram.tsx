@@ -6,12 +6,11 @@ import * as d3 from "d3";
 
 interface HasseDiagramProps {
   diagramData: DiagramData;
+  editing: boolean;
 }
 
-export default function HasseDiagram({ diagramData }: HasseDiagramProps) {
+export default function HasseDiagram({ diagramData, editing }: HasseDiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-
-  console.log("COMP", diagramData);
 
   useEffect(() => {
     if (!diagramData) return;
@@ -19,7 +18,7 @@ export default function HasseDiagram({ diagramData }: HasseDiagramProps) {
     const { nodes, edges } = diagramData;
 
     const width = 800;
-    const height = 700;
+    const height = 600;
     const svg = d3.select(svgRef.current!)
       .attr('width', width)
       .attr('height', height)
@@ -111,13 +110,16 @@ export default function HasseDiagram({ diagramData }: HasseDiagramProps) {
       .attr('font-size', '10px')
       .text(d => d.id);
 
-    nodeGroup.on('click', (event, d: NodeData) => {
-      d.functionality = d.functionality === 1 ? 0 : 1;
-      d3.select(event.currentTarget)
-        .select('rect')
-        .attr('fill', d.functionality === 1 ? 'lightgreen' : 'lightcoral');
-        console.log(diagramData);
-    });
+    if (editing) {
+      nodeGroup.on('click', (event, d: NodeData) => {
+        d.functionality = d.functionality === 1 ? 0 : 1;
+        d3.select(event.currentTarget)
+          .select('rect')
+          .attr('fill', d.functionality === 1 ? 'lightgreen' : 'lightcoral');
+      });
+    } else {
+      nodeGroup.on('click', null);
+    }
 
     nodeGroup
       .on('mouseover', (event, d: NodeData) => {
@@ -133,9 +135,7 @@ export default function HasseDiagram({ diagramData }: HasseDiagramProps) {
           .attr('stroke-width', 1.5);
       });
 
-
-      console.log(diagramData);
-  }, [diagramData]);
+  }, [editing, diagramData]);
 
   return <svg ref={svgRef}></svg>;
 };

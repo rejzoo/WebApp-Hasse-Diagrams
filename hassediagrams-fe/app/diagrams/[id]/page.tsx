@@ -2,11 +2,17 @@
 
 import HasseDiagram from "@/components/UI/HasseDiagram";
 import { use, useEffect, useState } from "react";
-import { Diagram, DiagramData } from "@/types/diagram";
+import { Diagram } from "@/types/diagram";
+import ToggleButton from "@/components/UI/ToggleButton";
 
 export default function DiagramPage({ params }: { params: Promise<{id: String}> }) {
     const { id } = use<{id: String}>(params); 
     const [diagram, setDiagram] = useState<Diagram>();
+    const [editing, setEditing] = useState<boolean>(false);
+
+    const handleToggle = (state: boolean) => {
+        setEditing(state);
+    };
 
     useEffect(() => {
         const fetchDiagrams = async () => {
@@ -27,10 +33,17 @@ export default function DiagramPage({ params }: { params: Promise<{id: String}> 
       }, []);
 
     return (
-        <div className="flex justify-center">
-            { diagram &&
-                <HasseDiagram diagramData={diagram.diagram_data} />
-            }
+        <div >
+            <div className="pb-8">
+                <ToggleButton onToggle={handleToggle}/>
+
+            </div>
+            <div className="flex justify-center">
+            
+                { diagram &&
+                    <HasseDiagram diagramData={diagram.diagram_data} editing={editing} />
+                }
+            </div>
         </div>
     );
 }
