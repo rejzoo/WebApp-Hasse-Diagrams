@@ -1,11 +1,10 @@
 'use client';
 
-import HasseDiagram from "@/components/UI/HasseDiagram";
 import { useEffect, useState } from "react";
-import { DiagramData } from "@/types/diagram";
+import { Diagram } from "@/types/diagram";
 
 export default function DiagramsPage() {
-  const [diagramData, setDiagramData] = useState<DiagramData | null>(null);
+    const [diagramData, setDiagramData] = useState<Diagram[] | null>(null);
 
   useEffect(() => {
     const fetchDiagrams = async () => {
@@ -17,19 +16,7 @@ export default function DiagramsPage() {
             const result = await response.json();
             console.log(result);
         
-            const transformed: DiagramData = {
-                nodes: result.nodes.map((node: any) => ({
-                    id: node.id,
-                    elements: node.elements,
-                    system: node.functionality,
-                })),
-          
-                edges: result.edges.map((edge: any) => ({
-                    source: edge.from,
-                    target: edge.to,
-                })),
-            };
-            
+            const transformed: Diagram[] = result.map((diagramObj: any) => diagramObj);
             setDiagramData(transformed);
         } catch (error) {
             console.error("Error fetching diagram:", error);
@@ -41,9 +28,15 @@ export default function DiagramsPage() {
 
   return (
     <div>
-        { diagramData &&
-            <HasseDiagram diagramData={diagramData} />
-        }
+        {diagramData ? (
+            diagramData.map((diagram, index) => (
+                <div key={index}>
+                    <pre>{JSON.stringify(diagram, null, 2)}</pre>
+                </div>
+            ))
+        ) : (
+            <p>Loading diagrams...</p>
+        )}
     </div>
   );
 }
