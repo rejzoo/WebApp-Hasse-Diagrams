@@ -61,9 +61,7 @@ public class DiagramService {
         List<NodeDTO> nodes = constructNodes(numberOfRows, data);
         List<EdgeDTO> edges = constructEdges(nodes);
 
-//        String a = DiagramConverter.generateDiagramJson(new DiagramData(nodes, edges));
-//        System.out.println(a);
-        return new Diagram(1, new DiagramData(nodes, edges));
+        return new Diagram(1, data.getDiagramName(), new DiagramData(nodes, edges));
     }
 
     /**

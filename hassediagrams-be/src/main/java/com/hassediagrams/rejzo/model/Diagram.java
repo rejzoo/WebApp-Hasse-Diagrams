@@ -20,16 +20,18 @@ public class Diagram {
     private Integer diagram_id;
 
     private Integer user_id;
+    private String diagram_name;
 
     @Type(JsonBinaryType.class)
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "diagram", columnDefinition = "jsonb")
-    private DiagramData diagram;
+    private DiagramData diagram_data;
 
     private Diagram() {}
 
-    public Diagram(Integer user_id, DiagramData diagram) {
+    public Diagram(Integer user_id, String diagram_name, DiagramData diagram_data) {
         this.user_id = user_id;
-        this.diagram = diagram;
+        this.diagram_name = diagram_name;
+        this.diagram_data = diagram_data;
     }
 }

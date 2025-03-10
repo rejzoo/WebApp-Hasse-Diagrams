@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -40,8 +41,8 @@ public class DiagramController {
      * @return returns diagram json data
      */
     @GetMapping("/{id}")
-    public ResponseEntity<String> fetchDiagram(@PathVariable String id) {
-        String json = String.valueOf(diagramService.findDiagram(Integer.valueOf(id)));
+    public ResponseEntity<Optional<Diagram>> fetchDiagram(@PathVariable String id) {
+        Optional<Diagram> json = diagramService.findDiagram(Integer.valueOf(id));
 
         return ResponseEntity.ok(json);
     }
