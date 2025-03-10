@@ -7,8 +7,8 @@ export interface NodeData {
 }
 
 export interface EdgeData {
-    source: string;
-    target: string;
+    from: string;
+    to: string;
 }
 
 export interface DiagramData {

@@ -15,8 +15,9 @@ export default function DiagramsPage() {
             });
 
             const result = await response.json();
-            console.log(result);
         
+            console.log(result);
+
             const transformed: Diagram[] = result.map((diagramObj: any) => diagramObj);
             setDiagramData(transformed);
         } catch (error) {

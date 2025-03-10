@@ -11,6 +11,8 @@ interface HasseDiagramProps {
 export default function HasseDiagram({ diagramData }: HasseDiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
 
+  console.log("COMP", diagramData);
+
   useEffect(() => {
     if (!diagramData) return;
 
@@ -70,17 +72,17 @@ export default function HasseDiagram({ diagramData }: HasseDiagramProps) {
     nodes.forEach(n => {
       nodeById[n.id] = n;
     });
-
+    
     // Draw edges
     container.selectAll('line.edge')
       .data(edges)
       .enter()
       .append('line')
       .attr('class', 'edge')
-      .attr('x1', d => nodeById[d.source].x!)
-      .attr('y1', d => nodeById[d.source].y!)
-      .attr('x2', d => nodeById[d.target].x!)
-      .attr('y2', d => nodeById[d.target].y!)
+      .attr('x1', d => nodeById[d.from].x!)
+      .attr('y1', d => nodeById[d.from].y!)
+      .attr('x2', d => nodeById[d.to].x!)
+      .attr('y2', d => nodeById[d.to].y!)
       .attr('stroke', 'gray')
       .attr('stroke-width', 2);
 
