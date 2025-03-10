@@ -100,7 +100,7 @@ export default function HasseDiagram({ diagramData }: HasseDiagramProps) {
       .attr('height', 30)
       .attr('x', -20)
       .attr('y', -15)
-      .attr('fill', d => d.system === 1 ? 'lightgreen' : 'lightcoral')
+      .attr('fill', d => d.functionality === 1 ? 'lightgreen' : 'lightcoral')
       .attr('stroke', 'black')
       .attr('stroke-width', 1.5);
 
@@ -112,10 +112,10 @@ export default function HasseDiagram({ diagramData }: HasseDiagramProps) {
       .text(d => d.id);
 
     nodeGroup.on('click', (event, d: NodeData) => {
-      d.system = d.system === 1 ? 0 : 1;
+      d.functionality = d.functionality === 1 ? 0 : 1;
       d3.select(event.currentTarget)
         .select('rect')
-        .attr('fill', d.system === 1 ? 'lightgreen' : 'lightcoral');
+        .attr('fill', d.functionality === 1 ? 'lightgreen' : 'lightcoral');
         console.log(diagramData);
     });
 
