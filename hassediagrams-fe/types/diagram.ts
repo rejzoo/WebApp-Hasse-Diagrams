@@ -19,5 +19,6 @@ export interface DiagramData {
 export interface Diagram {
     diagram_id: number;
     user_id: number;
+    diagram_name: string;
     diagram: DiagramData;
   }

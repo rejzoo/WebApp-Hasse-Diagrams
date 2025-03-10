@@ -4,13 +4,13 @@ import InputTable from '@/components/UI/InputTable'
 import { useState } from 'react';
 
 export default function CreatePage() {
-    const[numberOfElements, setNumberOfElements] = useState<number>(2);
-    const[manualElementsInput, setManualElementsInput] = useState<boolean>(false);
+    const [numberOfElements, setNumberOfElements] = useState<number>(2);
+    const [manualElementsInput, setManualElementsInput] = useState<boolean>(false);
 
     return (
         <div>
-            <div className="flex flex-col px-4 pb-8">
-                <div className="space-x-5 items-center">
+            <div className="flex flex-col px-4 pb-4">
+                <div className="space-x-4 items-center">
                     <span className="text-xl">Manual elements input</span>
                     <input 
                         type="checkbox" 

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ToggleCell from './ToggleCell';
 
 interface RowData {
@@ -39,6 +39,9 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
   const [combinations, setCombinations] = useState<number[][]>([]);
   const [rows, setRows] = useState<RowData[]>(calculateRows(numberOfElements));
   const headers = Array.from({ length: numberOfElements }, (_, i) => `X${i + 1}`);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [diagramName, setDiagramName] = useState<string>('');
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     setRows(calculateRows(numberOfElements));
@@ -61,12 +64,24 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
   };
 
   const createFunction = async () => {
+    if (!diagramName.trim()) {
+      if (inputRef.current) {
+        setError(true);
+        inputRef.current.focus();
+      }
+      return;
+    }
+
+    setDiagramName("");
+    setError(false);
+
     const data = rows.map((row, index) => ({
       [`elements${index + 1}`]: manualInput ? row.elements.map(val => (val === null ? 0 : val)) : combinations[index],
       [`functional${index + 1}`]: row.system === null ? 0 : row.system
     }));
 
     const finalData = {
+      diagramName: diagramName, 
       numberOfElements: numberOfElements,
       data: data
     };
@@ -96,10 +111,27 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
 
   const clearValues = () => {
     setRows(calculateRows(numberOfElements));
+    setDiagramName("");
+    setError(false);
   }
 
   return (
     <>
+      <div className="space-x-4 pb-6 px-4 items-center">
+        <span className="text-xl">Name of the diagram</span>
+        <input
+          ref={inputRef}
+          inputMode="text"
+          placeholder="Name"
+          required={true}
+          value={diagramName}
+          onChange={(e) => setDiagramName(e.target.value)}
+          className={`rounded-md h-8 px-2 max-w-96 text-white bg-[var(--itemsbackground)] focus:outline-none focus:ring-1 ${
+            error ? "border-red-500 focus:ring-red-500" : "focus:ring-white"
+          } focus:outline-none focus:ring-1`}
+        />
+      </div>
+
       <div className="flex justify-center">
         <div className="custom-scrollbar inline-block overflow-auto max-h-[60vh] bg-[var(--itemsbackground)]/15 rounded-2xl shadow-md shadow-gray-800">
           <table className="w-auto border-collapse">
