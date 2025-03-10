@@ -1,6 +1,6 @@
 'use client'
 
-import InputTable from '@/components/InpuTable/InputTable'
+import InputTable from '@/components/InputTable/InputTable'
 import { useState } from 'react';
 
 export default function CreatePage() {

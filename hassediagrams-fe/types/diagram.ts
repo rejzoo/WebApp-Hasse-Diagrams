@@ -1,7 +1,7 @@
 export interface NodeData {
     id: string;
     elements: number[];
-    system: number;
+    functionality: number;
     x?: number;
     y?: number;
 }
