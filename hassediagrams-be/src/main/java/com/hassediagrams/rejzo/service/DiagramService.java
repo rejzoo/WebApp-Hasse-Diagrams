@@ -1,30 +1,67 @@
 package com.hassediagrams.rejzo.service;
 
 import com.hassediagrams.rejzo.dto.*;
+import com.hassediagrams.rejzo.model.Diagram;
+import com.hassediagrams.rejzo.repository.DiagramRepository;
+import com.hassediagrams.rejzo.util.DiagramJSONGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DiagramService {
 
+    @Autowired
+    DiagramRepository diagramRepository;
+
     public DiagramService() {}
 
     /**
-     * Create list of nodes and edges
+     * Returns all diagrams from db
+     *
+     * @return diagrams
+     */
+    public String findAll() {
+        return diagramRepository.findAll().toString();
+    }
+
+    /**
+     * Finds diagram by id
+     *
+     * @param id of the diagram
+     * @return returns diagram with param id
+     */
+    public Optional<Diagram> findDiagram(Integer id) {
+        return diagramRepository.findById(id);
+    }
+
+    /**
+     * Saves the created diagram into the database
+     *
+     * @param data for diagram creation
+     */
+    public void saveDiagram(ElementDataWrapper data) {
+        Diagram diagramToSave = createDiagram(data);
+
+        diagramRepository.save(diagramToSave);
+    }
+
+    /**
+     * Create list of nodes and edges and saves the diagram into the database
      *
      * @param data that contains user input about diagram
-     * @return TODO: NOT IMPLEMENTED YET
      */
-    public DiagramData createDiagram(ElementDataWrapper data) {
+    private Diagram createDiagram(ElementDataWrapper data) {
         int numberOfElements = data.getNumberOfElements();
         int numberOfRows = (int) Math.pow(2, numberOfElements);
 
         List<NodeDTO> nodes = constructNodes(numberOfRows, data);
         List<EdgeDTO> edges = constructEdges(nodes);
 
-        return new DiagramData(nodes, edges);
+       return new Diagram(1, DiagramJSONGenerator.generateDiagramJson(new DiagramData(nodes, edges)));
     }
 
     /**
