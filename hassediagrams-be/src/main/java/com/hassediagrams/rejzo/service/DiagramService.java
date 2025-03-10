@@ -3,7 +3,6 @@ package com.hassediagrams.rejzo.service;
 import com.hassediagrams.rejzo.dto.*;
 import com.hassediagrams.rejzo.model.Diagram;
 import com.hassediagrams.rejzo.repository.DiagramRepository;
-import com.hassediagrams.rejzo.util.DiagramJSONGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +23,8 @@ public class DiagramService {
      *
      * @return diagrams
      */
-    public String findAll() {
-        return diagramRepository.findAll().toString();
+    public Iterable<Diagram> findAll() {
+        return diagramRepository.findAll();
     }
 
     /**
@@ -50,9 +49,10 @@ public class DiagramService {
     }
 
     /**
-     * Create list of nodes and edges and saves the diagram into the database
+     * Create list of nodes and edges
      *
      * @param data that contains user input about diagram
+     * @return Diagram returns constructed diagram
      */
     private Diagram createDiagram(ElementDataWrapper data) {
         int numberOfElements = data.getNumberOfElements();
@@ -61,7 +61,9 @@ public class DiagramService {
         List<NodeDTO> nodes = constructNodes(numberOfRows, data);
         List<EdgeDTO> edges = constructEdges(nodes);
 
-       return new Diagram(1, DiagramJSONGenerator.generateDiagramJson(new DiagramData(nodes, edges)));
+//        String a = DiagramConverter.generateDiagramJson(new DiagramData(nodes, edges));
+//        System.out.println(a);
+        return new Diagram(1, new DiagramData(nodes, edges));
     }
 
     /**
