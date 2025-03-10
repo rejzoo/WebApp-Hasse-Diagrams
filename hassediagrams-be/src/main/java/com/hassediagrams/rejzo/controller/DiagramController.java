@@ -4,6 +4,7 @@ import com.hassediagrams.rejzo.dto.DiagramData;
 import com.hassediagrams.rejzo.dto.ElementDataWrapper;
 import com.hassediagrams.rejzo.service.DiagramService;
 import com.hassediagrams.rejzo.util.DiagramJSONGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +14,34 @@ public class DiagramController {
 
     private final DiagramService diagramService;
 
-    // Just for testing for now
-    private DiagramData diagram;
-
     public DiagramController(DiagramService diagramService) {
         this.diagramService = diagramService;
+    }
+
+    /**
+     * Fetches all diagrams from database
+     * TODO: database - for now just attributes
+     *
+     * @return returns diagrams values for preview
+     */
+    @GetMapping("/fetchAll")
+    public ResponseEntity<String> fetchDiagrams() {
+        String json = diagramService.findAll();
+
+        return ResponseEntity.ok(json);
+    }
+
+    /**
+     * Fetches diagram from database
+     * TODO: database - for now just attributes
+     *
+     * @return returns diagram json data
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<String> fetchDiagram(@PathVariable String id) {
+        String json = String.valueOf(diagramService.findDiagram(Integer.valueOf(id)));
+
+        return ResponseEntity.ok(json);
     }
 
     /**
@@ -29,21 +53,8 @@ public class DiagramController {
      */
     @PostMapping("/create")
     public ResponseEntity<String> createDiagram(@RequestBody ElementDataWrapper data) {
-        this.diagram = diagramService.createDiagram(data);
+        diagramService.saveDiagram(data);
 
-        return ResponseEntity.ok("API Called, Result: ");
-    }
-
-    /**
-     * Fetches all diagrams from database
-     * TODO: database - for now just attributes
-     *
-     * @return returns diagram json data
-     */
-    @GetMapping("fetchAll")
-    public ResponseEntity<String> fetchDiagrams() {
-        String json = DiagramJSONGenerator.generateDiagramJson(diagram);
-
-        return ResponseEntity.ok(json);
+        return ResponseEntity.ok("API Called");
     }
 }
