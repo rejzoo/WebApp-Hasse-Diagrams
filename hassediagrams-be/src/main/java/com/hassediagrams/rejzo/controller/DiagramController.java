@@ -1,12 +1,14 @@
 package com.hassediagrams.rejzo.controller;
 
-import com.hassediagrams.rejzo.dto.DiagramData;
 import com.hassediagrams.rejzo.dto.ElementDataWrapper;
+import com.hassediagrams.rejzo.model.Diagram;
 import com.hassediagrams.rejzo.service.DiagramService;
-import com.hassediagrams.rejzo.util.DiagramJSONGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/api/diagrams")
@@ -20,20 +22,20 @@ public class DiagramController {
 
     /**
      * Fetches all diagrams from database
-     * TODO: database - for now just attributes
      *
      * @return returns diagrams values for preview
      */
     @GetMapping("/fetchAll")
-    public ResponseEntity<String> fetchDiagrams() {
-        String json = diagramService.findAll();
+    public ResponseEntity<List<Diagram>> fetchDiagrams() {
+        Iterable<Diagram> iterable = diagramService.findAll();
+        List<Diagram> diagrams = StreamSupport.stream(iterable.spliterator(), false)
+                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(json);
+        return ResponseEntity.ok(diagrams);
     }
 
     /**
      * Fetches diagram from database
-     * TODO: database - for now just attributes
      *
      * @return returns diagram json data
      */
@@ -46,7 +48,6 @@ public class DiagramController {
 
     /**
      * Creates the diagram
-     * TODO: inserts it into the table
      *
      * @param data input from user
      * @return returns status
