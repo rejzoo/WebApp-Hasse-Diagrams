@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Diagram } from "@/types/diagram";
+import HasseDiagramCard from "@/components/UI/HasseDiagramCard";
 
 export default function DiagramsPage() {
     const [diagramData, setDiagramData] = useState<Diagram[] | null>(null);
@@ -29,10 +30,15 @@ export default function DiagramsPage() {
   return (
     <div>
         {diagramData ? (
-            diagramData.map((diagram, index) => (
-                <div key={index}>
-                    <pre>{JSON.stringify(diagram, null, 2)}</pre>
-                </div>
+            diagramData.map((diagram) => (
+                <HasseDiagramCard 
+                    key={diagram.diagram_id} 
+                    diagramID={diagram.diagram_id}
+                    userID={diagram.user_id}
+                    numberOfNodes={diagram.diagram_data.nodes.length}
+                    numberOfEdges={diagram.diagram_data.edges.length}
+                    diagramName={diagram.diagram_name}
+                />
             ))
         ) : (
             <p>Loading diagrams...</p>
