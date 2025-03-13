@@ -7,9 +7,10 @@ import * as d3 from "d3";
 interface HasseDiagramProps {
   diagramData: DiagramData;
   editing: boolean;
+  onChange?: (updatedDiagramData: DiagramData) => void;
 }
 
-export default function HasseDiagram({ diagramData, editing }: HasseDiagramProps) {
+export default function HasseDiagram({ diagramData, editing, onChange }: HasseDiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<d3.ZoomTransform | null>(null);
 
@@ -155,6 +156,9 @@ export default function HasseDiagram({ diagramData, editing }: HasseDiagramProps
           d3.select(event.currentTarget)
             .select("rect")
             .attr("fill", d.functionality === 1 ? "lightgreen" : "lightcoral");
+          if (onChange) {
+            onChange(diagramData);
+          }
         })
         .on("mouseover", (event, d) => {
           d3.select(event.currentTarget)
