@@ -15,7 +15,7 @@ export default function ToggleButton({ onToggle }: ToggleButtonProps) {
   };
 
   return (
-    <>
+    <div>
         <div>
             <span>Mode:</span>
         </div>
@@ -37,6 +37,6 @@ export default function ToggleButton({ onToggle }: ToggleButtonProps) {
                 Edit
             </button>
         </div>
-    </>
+    </div>
   );
 }
