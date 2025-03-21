@@ -3,7 +3,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
-import { calculateRows, calculateCombinations, RowData } from '@/utils/tableUtils';
+import { calculateRows, calculateCombinations } from '@/utils/tableUtils';
+import { RowData } from '@/types/table';
+import { diagramNameRegex } from '@/utils/regex';
 
 interface TableProps {
   numberOfElements: number;
@@ -41,28 +43,38 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
     setResponseMsg('');
   };
 
-  const createFunction = async () => {
-    setResponseMsg('');
-    if (!diagramName.trim()) {
+  const isValidName = () => {
+    if (!diagramName.trim() || !diagramNameRegex.test(diagramName.trim())) {
       if (inputRef.current) {
         setError(true);
         inputRef.current.focus();
-        setResponseMsg("Input the valid name");
-        setResponseErr(true);
       }
-      return;
+      setResponseMsg("Input the valid name");
+      setResponseErr(true);
+
+      return false;
     }
 
+    return true;
+  }
+
+  const allSystemInputFilled = () => {
     if (rows.some(row => row.system === null)) {
       setHighlightSystem(true);
       setResponseMsg("Input all of the functionality rows");
       setResponseErr(true);
-      return;
+      return false;
     }
 
-    setDiagramName('');
-    setError(false);
-    setHighlightSystem(false);
+    return true;
+  }
+
+  const createFunction = async () => {
+    setResponseMsg('');
+
+    if (!isValidName() || !allSystemInputFilled()) {
+      return;
+    }
 
     const data = rows.map((row, index) => ({
       [`elements${index + 1}`]: manualInput
@@ -90,7 +102,6 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
       setResponseMsg(text);
       setResponseErr(false);
     } catch (error) {
-      console.error('Error submitting data:', error);
       setResponseMsg('Error submitting data: ' + error);
       setResponseErr(true);
     }
@@ -104,8 +115,9 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
     setError(false);
     setHighlightSystem(false);
     
-    if (isClearButton)
+    if (isClearButton) {
       setResponseMsg('');
+    }
   };
 
   return (
@@ -167,7 +179,6 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
           Clear All
         </button>
       </div>
-
     </>
   );
 }

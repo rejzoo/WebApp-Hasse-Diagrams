@@ -1,5 +1,5 @@
 import React from 'react';
-import { RowData } from '@/utils/tableUtils';
+import { RowData } from '@/types/table';
 import ToggleCell from '../UI/ToggleCell';
 
 interface TableRowProps {
