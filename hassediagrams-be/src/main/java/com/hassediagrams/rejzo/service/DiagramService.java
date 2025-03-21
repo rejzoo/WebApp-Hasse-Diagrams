@@ -55,10 +55,10 @@ public class DiagramService {
     }
 
     @Transactional
-    public void updateDiagramFunctionality(Integer id, DiagramData data) {
+    public int updateDiagramFunctionality(Integer id, DiagramData data) {
         try {
             String json = objectMapper.writeValueAsString(data);
-            diagramRepository.updateDiagram(id, json);
+            return diagramRepository.updateDiagram(id, json);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error converting DiagramData to JSON", e);
         }
