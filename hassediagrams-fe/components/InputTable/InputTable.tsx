@@ -12,6 +12,7 @@ interface TableProps {
 
 export default function InputTable({ numberOfElements, manualInput }: TableProps) {
   const [responseMsg, setResponseMsg] = useState('');
+  const [responseErr, setResponseErr] = useState(false);
   const [combinations, setCombinations] = useState<number[][]>([]);
   const [rows, setRows] = useState<RowData[]>(calculateRows(numberOfElements));
   const headers = Array.from({ length: numberOfElements }, (_, i) => `X${i + 1}`);
@@ -30,25 +31,32 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
     const newRows = [...rows];
     newRows[rowIndex].elements[colIndex] = value;
     setRows(newRows);
+    setResponseMsg('');
   };
 
   const handleSystemClick = (rowIndex: number, value: number | null) => {
     const newRows = [...rows];
     newRows[rowIndex].system = value;
     setRows(newRows);
+    setResponseMsg('');
   };
 
   const createFunction = async () => {
+    setResponseMsg('');
     if (!diagramName.trim()) {
       if (inputRef.current) {
         setError(true);
         inputRef.current.focus();
+        setResponseMsg("Input the valid name");
+        setResponseErr(true);
       }
       return;
     }
 
     if (rows.some(row => row.system === null)) {
       setHighlightSystem(true);
+      setResponseMsg("Input all of the functionality rows");
+      setResponseErr(true);
       return;
     }
 
@@ -80,24 +88,29 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
 
       const text = await res.text();
       setResponseMsg(text);
+      setResponseErr(false);
     } catch (error) {
       console.error('Error submitting data:', error);
-      setResponseMsg('Error submitting data');
+      setResponseMsg('Error submitting data: ' + error);
+      setResponseErr(true);
     }
     
-    clearValues();
+    clearValues(false);
   };
 
-  const clearValues = () => {
+  const clearValues = (isClearButton: boolean) => {
     setRows(calculateRows(numberOfElements));
     setDiagramName('');
     setError(false);
     setHighlightSystem(false);
+    
+    if (isClearButton)
+      setResponseMsg('');
   };
 
   return (
     <>
-      <div className="space-x-4 pb-6 px-4 items-center">
+      <div className="space-x-4 pb-4 px-4 items-center">
         <span className="text-xl">Name of the diagram</span>
         <input
           ref={inputRef}
@@ -105,12 +118,17 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
           placeholder="Name"
           required
           value={diagramName}
-          onChange={(e) => setDiagramName(e.target.value)}
+          onChange={(e) => {
+            setResponseMsg('');
+            setDiagramName(e.target.value)
+          }}
           className={`rounded-md h-8 px-2 max-w-96 text-white bg-[var(--itemsbackground)] focus:outline-none focus:ring-1 ${
             error ? 'border-red-500 focus:ring-red-500' : 'focus:ring-white'
           }`}
-        />
+          />
       </div>
+
+      <p className={`px-4 pb-4 h-10 ${responseErr ? 'text-red-600' : 'text-green-500' }`}>{responseMsg}</p>
 
       <div className="flex justify-center">
         <div className="custom-scrollbar inline-block overflow-auto max-h-[60vh] bg-[var(--itemsbackground)]/15 rounded-2xl shadow-md shadow-gray-800">
@@ -144,13 +162,12 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
         </button>
         <button
           className="w-20 h-10 bg-[var(--itemsbackground)] rounded-md"
-          onClick={clearValues}
+          onClick={() => clearValues(true)}
         >
           Clear All
         </button>
       </div>
 
-      <p>{responseMsg}</p>
     </>
   );
 }
