@@ -18,6 +18,7 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
   const inputRef = useRef<HTMLInputElement>(null);
   const [diagramName, setDiagramName] = useState<string>('');
   const [error, setError] = useState(false);
+  const [highlightSystem, setHighlightSystem] = useState(false);
 
   useEffect(() => {
     setRows(calculateRows(numberOfElements));
@@ -46,8 +47,14 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
       return;
     }
 
+    if (rows.some(row => row.system === null)) {
+      setHighlightSystem(true);
+      return;
+    }
+
     setDiagramName('');
     setError(false);
+    setHighlightSystem(false);
 
     const data = rows.map((row, index) => ({
       [`elements${index + 1}`]: manualInput
@@ -85,6 +92,7 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
     setRows(calculateRows(numberOfElements));
     setDiagramName('');
     setError(false);
+    setHighlightSystem(false);
   };
 
   return (
@@ -119,6 +127,7 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
                   combinations={combinations}
                   onElementClick={handleElementClick}
                   onSystemClick={handleSystemClick}
+                  highlight={highlightSystem}
                 />
               ))}
             </tbody>
