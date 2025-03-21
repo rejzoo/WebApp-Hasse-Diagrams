@@ -4,6 +4,7 @@ import com.hassediagrams.rejzo.dto.DiagramData;
 import com.hassediagrams.rejzo.dto.ElementDataWrapper;
 import com.hassediagrams.rejzo.model.Diagram;
 import com.hassediagrams.rejzo.service.DiagramService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,7 +56,7 @@ public class DiagramController {
      * @return returns status
      */
     @PostMapping("/create")
-    public ResponseEntity<String> createDiagram(@RequestBody ElementDataWrapper data) {
+    public ResponseEntity<String> createDiagram(@Valid @RequestBody ElementDataWrapper data) {
         diagramService.saveDiagram(data);
 
         return ResponseEntity.ok("API Called");
