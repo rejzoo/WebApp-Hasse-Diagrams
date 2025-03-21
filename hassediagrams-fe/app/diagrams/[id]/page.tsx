@@ -25,7 +25,6 @@ export default function DiagramPage({ params }: { params: Promise<{id: String}> 
                 const result = await response.json();
             
                 setDiagram(result);
-
                 if (!baselineDiagramRef.current) {
                     baselineDiagramRef.current = JSON.parse(JSON.stringify(result));
                 }
@@ -43,7 +42,7 @@ export default function DiagramPage({ params }: { params: Promise<{id: String}> 
 
     const isDiagramChanged = (): boolean => {
         if (!diagram || !baselineDiagramRef.current) return false;
-        
+
         const currentNodes = diagram.diagram_data.nodes;
         const baselineNodes = baselineDiagramRef.current.diagram_data.nodes;
         if (currentNodes.length !== baselineNodes.length) return true;
@@ -73,9 +72,13 @@ export default function DiagramPage({ params }: { params: Promise<{id: String}> 
                     },
                     body: JSON.stringify(strippedData),
                 });
-                console.log(strippedData);
-                const result = await response.text();
-                console.log(result);
+                
+                const result: boolean = await response.json();
+                
+                if (result) {
+                    baselineDiagramRef.current = JSON.parse(JSON.stringify(diagram));
+                    setDiagram({ ...diagram });
+                }
             } catch (error) {
                 console.error("Error updating diagram:", error);
             }
