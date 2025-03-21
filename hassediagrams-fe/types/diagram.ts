@@ -21,4 +21,4 @@ export interface Diagram {
     user_id: number;
     diagram_name: string;
     diagram_data: DiagramData;
-  }
+}

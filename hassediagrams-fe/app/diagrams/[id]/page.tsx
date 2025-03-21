@@ -2,7 +2,7 @@
 
 import HasseDiagram from "@/components/UI/HasseDiagram";
 import { use, useEffect, useRef, useState } from "react";
-import { Diagram } from "@/types/diagram";
+import { Diagram, DiagramData } from "@/types/diagram";
 import ToggleButton from "@/components/UI/ToggleButton";
 
 export default function DiagramPage({ params }: { params: Promise<{id: String}> }) {
@@ -56,11 +56,29 @@ export default function DiagramPage({ params }: { params: Promise<{id: String}> 
         return false;
     };
 
-    const handleSave = () => {
-        if (isDiagramChanged()) {
-          console.log("Diagram has changed:", diagram);
-        } else {
-          console.log("No changes detected.");
+    const prepareDiagramData = (data: DiagramData): DiagramData => ({
+        ...data,
+        nodes: data.nodes.map(({ x, y, ...rest }) => rest)
+    });
+
+    const handleSave = async () => {
+        if (isDiagramChanged() && diagram) {
+            try {
+                const strippedData = prepareDiagramData(diagram.diagram_data);
+
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/update/${id}`, { 
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(strippedData),
+                });
+                console.log(strippedData);
+                const result = await response.text();
+                console.log(result);
+            } catch (error) {
+                console.error("Error updating diagram:", error);
+            }
         }
     };
 
