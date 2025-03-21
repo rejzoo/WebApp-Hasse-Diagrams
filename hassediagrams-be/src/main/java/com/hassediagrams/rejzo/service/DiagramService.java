@@ -1,8 +1,11 @@
 package com.hassediagrams.rejzo.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hassediagrams.rejzo.dto.*;
 import com.hassediagrams.rejzo.model.Diagram;
 import com.hassediagrams.rejzo.repository.DiagramRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,9 @@ public class DiagramService {
 
     @Autowired
     DiagramRepository diagramRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public DiagramService() {}
 
@@ -48,6 +54,16 @@ public class DiagramService {
         diagramRepository.save(diagramToSave);
     }
 
+    @Transactional
+    public void updateDiagramFunctionality(Integer id, DiagramData data) {
+        try {
+            String json = objectMapper.writeValueAsString(data);
+            diagramRepository.updateDiagram(id, json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting DiagramData to JSON", e);
+        }
+    }
+
     /**
      * Create list of nodes and edges
      *
@@ -55,13 +71,7 @@ public class DiagramService {
      * @return Diagram returns constructed diagram
      */
     private Diagram createDiagram(ElementDataWrapper data) {
-        int numberOfElements = data.getNumberOfElements();
-        int numberOfRows = (int) Math.pow(2, numberOfElements);
-
-        List<NodeDTO> nodes = constructNodes(numberOfRows, data);
-        List<EdgeDTO> edges = constructEdges(nodes);
-
-        return new Diagram(1, data.getDiagramName(), new DiagramData(nodes, edges));
+        return new Diagram(1, data.getDiagramName(), constructDiagramData(data));
     }
 
     /**
@@ -152,5 +162,15 @@ public class DiagramService {
         }
 
         return levelDifference == 1;
+    }
+
+    private DiagramData constructDiagramData(ElementDataWrapper data) {
+        int numberOfElements = data.getNumberOfElements();
+        int numberOfRows = (int) Math.pow(2, numberOfElements);
+
+        List<NodeDTO> nodes = constructNodes(numberOfRows, data);
+        List<EdgeDTO> edges = constructEdges(nodes);
+
+        return new DiagramData(nodes, edges);
     }
 }

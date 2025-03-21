@@ -10,7 +10,4 @@ import java.util.List;
 public class DiagramData {
     private List<NodeDTO> nodes;
     private List<EdgeDTO> edges;
-
-
 }
-

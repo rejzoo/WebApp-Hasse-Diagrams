@@ -1,5 +1,6 @@
 package com.hassediagrams.rejzo.controller;
 
+import com.hassediagrams.rejzo.dto.DiagramData;
 import com.hassediagrams.rejzo.dto.ElementDataWrapper;
 import com.hassediagrams.rejzo.model.Diagram;
 import com.hassediagrams.rejzo.service.DiagramService;
@@ -58,5 +59,12 @@ public class DiagramController {
         diagramService.saveDiagram(data);
 
         return ResponseEntity.ok("API Called");
+    }
+
+    @PostMapping("/update/{id}")
+    public ResponseEntity<String> updateFunctionality(@PathVariable String id, @RequestBody DiagramData data) {
+        diagramService.updateDiagramFunctionality(Integer.valueOf(id), data);
+
+        return ResponseEntity.ok("Diagram updated");
     }
 }
