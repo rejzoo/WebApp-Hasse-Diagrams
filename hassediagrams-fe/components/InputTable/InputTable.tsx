@@ -90,7 +90,7 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
     };
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/create`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +98,14 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
         body: JSON.stringify(finalData),
       });
 
-      const text = await res.text();
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        setResponseErr(true);
+        setResponseMsg(errorResponse.diagramName);
+        return;
+      }
+
+      const text = await response.text();
       setResponseMsg(text);
       setResponseErr(false);
     } catch (error) {
@@ -140,7 +147,7 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
           />
       </div>
 
-      <p className={`px-4 pb-4 h-10 ${responseErr ? 'text-red-600' : 'text-green-500' }`}>{responseMsg}</p>
+      <p className={`px-4 pb-4 min-h-10 ${responseErr ? 'text-red-600' : 'text-green-500' }`}>{responseMsg}</p>
 
       <div className="flex justify-center">
         <div className="custom-scrollbar inline-block overflow-auto max-h-[60vh] bg-[var(--itemsbackground)]/15 rounded-2xl shadow-md shadow-gray-800">
