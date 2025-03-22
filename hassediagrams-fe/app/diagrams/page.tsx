@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Diagram } from "@/types/diagram";
-import HasseDiagramCard from "@/components/UI/HasseDiagramCard";
+import HasseDiagramCard from "@/components/Diagram/HasseDiagramCard";
 
 export default function DiagramsPage() {
     const [diagramData, setDiagramData] = useState<Diagram[] | null>(null);

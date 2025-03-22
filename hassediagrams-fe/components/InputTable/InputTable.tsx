@@ -98,6 +98,8 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
         body: JSON.stringify(finalData),
       });
 
+      console.log(JSON.stringify(finalData));
+
       if (!response.ok) {
         const errorResponse = await response.json();
         setResponseErr(true);
