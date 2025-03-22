@@ -36,6 +36,7 @@ export default function DiagramsPage() {
                     key={diagram.diagram_id} 
                     diagramID={diagram.diagram_id}
                     userID={diagram.user_id}
+                    numberOfElements={diagram.diagram_elements_count}
                     numberOfNodes={diagram.diagram_data.nodes.length}
                     numberOfEdges={diagram.diagram_data.edges.length}
                     diagramName={diagram.diagram_name}

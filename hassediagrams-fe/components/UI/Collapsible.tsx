@@ -13,7 +13,7 @@ export default function Collapsible({ title, opened, children } : CollProbs) {
         <div className="w-full">
           <button
             onClick={() => setIsVisible(prev => !prev)}
-            className="w-full py-2 px-4 bg-[var(--itemsbackground)] rounded-md flex items-center space-x-2 font-bold"
+            className="w-full py-2 px-4 bg-[var(--itemsbackground)] rounded-md flex items-center space-x-2 font-bold hover:bg-[#26233d]"
           >
             <span>{isVisible ? '▲' : '▼'}</span>
             <span>{title}</span>

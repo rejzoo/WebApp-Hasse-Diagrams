@@ -71,10 +71,10 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
 
   const createFunction = async () => {
     setResponseMsg('');
-
-    if (!isValidName() || !allSystemInputFilled()) {
-      return;
-    }
+    // Consult this
+    // if (!isValidName() || !allSystemInputFilled()) {
+    //   return;
+    // }
 
     const data = rows.map((row, index) => ({
       [`elements${index + 1}`]: manualInput

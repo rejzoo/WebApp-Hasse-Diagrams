@@ -89,29 +89,58 @@ export default function DiagramPage({ params }: { params: Promise<{id: String}> 
     return (
         <div className="space-y-10">
             <Collapsible title="Diagram information" opened={false}>
-                <p>NOT IMPLEMENTED</p>
+                <div className="flex flex-row space-x-10 text-ml">
+                    <div className="flex flex-col">
+                        <p>Diagram name:</p>
+                        <p>Created by:</p>
+                        <p>Number of elements:</p>
+                        <p>Number of nodes:</p>
+                        <p>Number of edges:</p>
+                    </div>
+
+                    <div className="flex flex-col">
+                        <p>{diagram?.diagram_name}</p>
+                        <p>{diagram?.user_id}</p>
+                        <p>{diagram?.diagram_elements_count}</p>
+                        <p>{diagram?.diagram_data.nodes.length}</p>
+                        <p>{diagram?.diagram_data.edges.length}</p>
+                    </div>
+                </div>
             </Collapsible>
 
             <Collapsible title="Diagram" opened={true}>
-                <div className="flex pb-8 justify-between">
-                    <ToggleButton onToggle={handleToggle}/>
-                    <button 
-                        onClick={handleSave}
-                        disabled={!isDiagramChanged()}
-                        className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
-                            !isDiagramChanged() ? "opacity-50 cursor-not-allowed" : ""
-                        }`}
-                    >SAVE</button>
-                </div>
-                <div className="flex justify-center">
-                    { diagram &&
-                        <HasseDiagram 
-                        diagramData={diagram.diagram_data} 
-                        editing={editing}
-                        onChange={handleDiagramChange}
-                        />
-                    }
-                </div>
+                {(baselineDiagramRef.current && baselineDiagramRef.current?.diagram_elements_count <= 6) ? (
+                    <>
+                        <div className="flex pb-8 justify-between">
+                            <ToggleButton onToggle={handleToggle}/>
+                            <button 
+                                onClick={handleSave}
+                                disabled={!isDiagramChanged()}
+                                className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
+                                    !isDiagramChanged() ? "opacity-50 cursor-not-allowed" : ""
+                                }`}
+                            >SAVE</button>
+                        </div>
+                        <div className="flex justify-center">
+                            { diagram &&
+                                <HasseDiagram 
+                                diagramData={diagram.diagram_data} 
+                                editing={editing}
+                                onChange={handleDiagramChange}
+                                />
+                            }
+                        </div>
+                    </>
+                ) : (
+                    <div className="font-bold flex justify-center flex-col space-y-3">
+                        <p>
+                            Diagrams with elements count {">"} 6 are not clear to read.
+                        </p>
+                        <p>
+                            This diagram has {baselineDiagramRef.current?.diagram_elements_count} elements and is not rendered.
+                        </p>
+                    </div>
+                )}
             </Collapsible>
 
             <Collapsible title="Critical elements" opened={false}>
