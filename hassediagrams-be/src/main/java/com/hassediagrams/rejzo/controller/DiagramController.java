@@ -79,8 +79,7 @@ public class DiagramController {
      */
     @PostMapping("/update/{id}")
     public ResponseEntity<String> updateFunctionality(@PathVariable String id, @RequestBody DiagramData data) {
-        int rowsUpdated = diagramService.updateDiagramFunctionality(Integer.valueOf(id), data);
-        boolean result = (rowsUpdated == 1);
+        boolean result = diagramService.updateDiagramFunctionality(Integer.valueOf(id), data);
 
         String resultMessage = result ? "Diagram updated." : "Diagram not updated.";
 

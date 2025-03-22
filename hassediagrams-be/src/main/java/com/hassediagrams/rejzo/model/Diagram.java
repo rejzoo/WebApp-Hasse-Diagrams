@@ -9,6 +9,9 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Table entity
  */
@@ -28,8 +31,13 @@ public class Diagram {
 
     @Type(JsonBinaryType.class)
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "diagram", columnDefinition = "jsonb")
+    @Column(name = "diagram_structure", columnDefinition = "jsonb")
     private DiagramData diagram_data;
+
+    @Type(JsonBinaryType.class)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "critical_elements", columnDefinition = "jsonb")
+    private Map<String, List<List<Integer>>> criticalElements;
 
     private Diagram() {}
 

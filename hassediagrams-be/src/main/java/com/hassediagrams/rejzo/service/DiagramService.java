@@ -9,20 +9,19 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DiagramService {
+    private final DiagramRepository diagramRepository;
+    private final ObjectMapper objectMapper;
+    private final GraphService graphService;
 
-    @Autowired
-    DiagramRepository diagramRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    public DiagramService() {}
+    public DiagramService(DiagramRepository diagramRepository, ObjectMapper objectMapper, GraphService graphService) {
+        this.diagramRepository = diagramRepository;
+        this.objectMapper = objectMapper;
+        this.graphService = graphService;
+    }
 
     /**
      * Returns all diagrams from db
@@ -53,7 +52,13 @@ public class DiagramService {
         Diagram diagramToSave = createDiagram(data);
 
         Diagram savedDiagram = diagramRepository.save(diagramToSave);
-        return savedDiagram.getDiagram_id() != null;
+        boolean saved = savedDiagram.getDiagram_id() != null;
+
+        if (saved) {
+            graphService.processCriticalElements(savedDiagram.getDiagram_id(), savedDiagram.getDiagram_data());
+        }
+
+        return saved;
     }
 
     /**
@@ -64,10 +69,17 @@ public class DiagramService {
      * @return returns number of updated rows
      */
     @Transactional
-    public int updateDiagramFunctionality(Integer id, DiagramData data) {
+    public boolean updateDiagramFunctionality(Integer id, DiagramData data) {
         try {
-            String json = objectMapper.writeValueAsString(data);
-            return diagramRepository.updateDiagram(id, json);
+            String jsonStructure = objectMapper.writeValueAsString(data);
+            int updatedStructureRows = diagramRepository.updateDiagramStructure(id, jsonStructure);
+
+            // TODO I dont like this
+            if (updatedStructureRows == 1) {
+                graphService.processCriticalElements(id, data);
+            }
+
+            return updatedStructureRows == 1;
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error converting DiagramData to JSON", e);
         }
