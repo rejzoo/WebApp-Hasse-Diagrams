@@ -1,9 +1,10 @@
 'use client'
 
-import HasseDiagram from "@/components/UI/HasseDiagram";
+import HasseDiagram from "@/components/Diagram/HasseDiagram";
 import { use, useEffect, useRef, useState } from "react";
 import { Diagram, DiagramData } from "@/types/diagram";
 import ToggleButton from "@/components/UI/ToggleButton";
+import Collapsible from "@/components/UI/Collapsible";
 
 export default function DiagramPage({ params }: { params: Promise<{id: String}> }) {
     const { id } = use<{id: String}>(params); 
@@ -86,27 +87,36 @@ export default function DiagramPage({ params }: { params: Promise<{id: String}> 
     };
 
     return (
-        <div>
-            <div className="flex pb-8 justify-between ">
-                <ToggleButton onToggle={handleToggle}/>
-                <button 
-                    onClick={handleSave}
-                    disabled={!isDiagramChanged()}
-                    className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
-                        !isDiagramChanged() ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
-                >SAVE</button>
-            </div>
-            <div className="flex justify-center">
-            
-                { diagram &&
-                    <HasseDiagram 
+        <div className="space-y-10">
+            <Collapsible title="Diagram information" opened={false}>
+                <p>NOT IMPLEMENTED</p>
+            </Collapsible>
+
+            <Collapsible title="Diagram" opened={true}>
+                <div className="flex pb-8 justify-between">
+                    <ToggleButton onToggle={handleToggle}/>
+                    <button 
+                        onClick={handleSave}
+                        disabled={!isDiagramChanged()}
+                        className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
+                            !isDiagramChanged() ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                    >SAVE</button>
+                </div>
+                <div className="flex justify-center">
+                    { diagram &&
+                        <HasseDiagram 
                         diagramData={diagram.diagram_data} 
                         editing={editing}
                         onChange={handleDiagramChange}
-                    />
-                }
-            </div>
+                        />
+                    }
+                </div>
+            </Collapsible>
+
+            <Collapsible title="Critical elements" opened={false}>
+                <p>NOT IMPLEMENTED</p>
+            </Collapsible>
         </div>
     );
 }
