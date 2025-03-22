@@ -71,7 +71,7 @@ public class DiagramService {
      * @return Diagram returns constructed diagram
      */
     private Diagram createDiagram(ElementDataWrapper data) {
-        return new Diagram(1, data.getDiagramName(), constructDiagramData(data));
+        return new Diagram(1, data.getDiagramName(), data.getNumberOfElements(), constructDiagramData(data));
     }
 
     /**

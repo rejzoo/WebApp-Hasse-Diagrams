@@ -21,6 +21,7 @@ public class Diagram {
 
     private Integer user_id;
     private String diagram_name;
+    private Integer diagram_elements_count;
 
     @Type(JsonBinaryType.class)
     @JdbcTypeCode(SqlTypes.JSON)
@@ -29,9 +30,10 @@ public class Diagram {
 
     private Diagram() {}
 
-    public Diagram(Integer user_id, String diagram_name, DiagramData diagram_data) {
+    public Diagram(Integer user_id, String diagram_name, Integer diagram_elements_count, DiagramData diagram_data) {
         this.user_id = user_id;
         this.diagram_name = diagram_name;
+        this.diagram_elements_count = diagram_elements_count;
         this.diagram_data = diagram_data;
     }
 }
