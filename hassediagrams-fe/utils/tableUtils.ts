@@ -6,11 +6,11 @@ export function calculateRows(numElements: number): RowData[] {
     system: null,
   }));
 }
-  
+
 export function calculateCombinations(numberOfElements: number): number[][] {
   const total = 2 ** numberOfElements;
   const combinations: number[][] = [];
-    
+
   for (let i = 0; i < total; i++) {
     const combo: number[] = [];
     for (let j = numberOfElements - 1; j >= 0; j--) {

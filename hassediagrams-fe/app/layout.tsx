@@ -25,10 +25,8 @@ export default function RootLayout({
       <body className={`${raleway.variable} ${raleway.className} antialiased`}>
         <Header />
 
-        <div className="px-72 pt-20">
-          { children }
-        </div>
-        
+        <div className="px-72 pt-20">{children}</div>
+
         <Footer />
       </body>
     </html>

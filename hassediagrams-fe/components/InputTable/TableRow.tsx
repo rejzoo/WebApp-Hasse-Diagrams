@@ -1,6 +1,6 @@
-import React from 'react';
-import { RowData } from '@/types/table';
-import ToggleCell from '../UI/ToggleCell';
+import React from "react";
+import { RowData } from "@/types/table";
+import ToggleCell from "../UI/ToggleCell";
 
 interface TableRowProps {
   rowIndex: number;
@@ -8,7 +8,11 @@ interface TableRowProps {
   headers: string[];
   manualInput: boolean;
   combinations: number[][];
-  onElementClick: (rowIndex: number, colIndex: number, value: number | null) => void;
+  onElementClick: (
+    rowIndex: number,
+    colIndex: number,
+    value: number | null
+  ) => void;
   onSystemClick: (rowIndex: number, value: number | null) => void;
   highlight: boolean;
 }
@@ -21,15 +25,17 @@ export default function TableRow({
   combinations,
   onElementClick,
   onSystemClick,
-  highlight
+  highlight,
 }: TableRowProps) {
   return (
     <tr className="hover:bg-[var(--itemsbackground)]/10 transition-colors">
       <td className="text-center sticky left-0 bg-[var(--itemsbackground)] w-10 mr-2">
         {rowIndex + 1}
       </td>
-      <td className={`py-2 text-center transition duration-200 ${
-        highlight && row.system === null ? "bg-red-500/20" : ""}`}
+      <td
+        className={`py-2 text-center transition duration-200 ${
+          highlight && row.system === null ? "bg-red-500/20" : ""
+        }`}
       >
         <ToggleCell
           currentValue={row.system}
@@ -45,7 +51,7 @@ export default function TableRow({
             />
           ) : (
             <span className="text-lg text-[var(--foreground)]">
-              {combinations[rowIndex] ? combinations[rowIndex][colIndex] : ''}
+              {combinations[rowIndex] ? combinations[rowIndex][colIndex] : ""}
             </span>
           )}
         </td>

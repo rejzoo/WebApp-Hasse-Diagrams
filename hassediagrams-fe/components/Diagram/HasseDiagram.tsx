@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useRef, useEffect } from "react";
 import { NodeData, DiagramData } from "@/types/diagram";
@@ -10,7 +10,11 @@ interface HasseDiagramProps {
   onChange?: (updatedDiagramData: DiagramData) => void;
 }
 
-export default function HasseDiagram({ diagramData, editing, onChange }: HasseDiagramProps) {
+export default function HasseDiagram({
+  diagramData,
+  editing,
+  onChange,
+}: HasseDiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<d3.ZoomTransform | null>(null);
 
@@ -50,7 +54,7 @@ export default function HasseDiagram({ diagramData, editing, onChange }: HasseDi
 
     // Level grouping
     const levels: { [level: number]: NodeData[] } = {};
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       const level = node.elements.reduce((sum, x) => sum + x, 0);
       if (!levels[level]) levels[level] = [];
       levels[level].push(node);
@@ -65,7 +69,7 @@ export default function HasseDiagram({ diagramData, editing, onChange }: HasseDi
       const rowNodes = levels[level];
       const y = 50 + (totalLevels - 1 - idx) * levelSpacing;
       const rowCount = rowNodes.length;
-      const startX = (width / 2) - ((rowCount - 1) / 2) * nodeSpacing;
+      const startX = width / 2 - ((rowCount - 1) / 2) * nodeSpacing;
       rowNodes.forEach((node, i) => {
         node.x = startX + i * nodeSpacing;
         node.y = y;
@@ -73,45 +77,55 @@ export default function HasseDiagram({ diagramData, editing, onChange }: HasseDi
     });
 
     const nodeById: { [id: string]: NodeData } = {};
-    nodes.forEach(n => { nodeById[n.id] = n; });
+    nodes.forEach((n) => {
+      nodeById[n.id] = n;
+    });
 
     // Draw edges
-    container.selectAll("line.edge")
+    container
+      .selectAll("line.edge")
       .data(edges, (d: any) => `${d.from}-${d.to}`)
       .enter()
       .append("line")
       .attr("class", "edge")
-      .attr("x1", d => nodeById[d.from].x!)
-      .attr("y1", d => nodeById[d.from].y!)
-      .attr("x2", d => nodeById[d.to].x!)
-      .attr("y2", d => nodeById[d.to].y!)
+      .attr("x1", (d) => nodeById[d.from].x!)
+      .attr("y1", (d) => nodeById[d.from].y!)
+      .attr("x2", (d) => nodeById[d.to].x!)
+      .attr("y2", (d) => nodeById[d.to].y!)
       .attr("stroke", "gray")
       .attr("stroke-width", 2);
 
     // Draw nodes
-    const nodeSelection = container.selectAll<SVGGElement, NodeData>("g.node")
-      .data(nodes, d => d.id);
+    const nodeSelection = container
+      .selectAll<SVGGElement, NodeData>("g.node")
+      .data(nodes, (d) => d.id);
 
     // Remove old nodes
     nodeSelection.exit().remove();
 
     // Append new nodes
-    const nodeEnter = nodeSelection.enter().append("g")
+    const nodeEnter = nodeSelection
+      .enter()
+      .append("g")
       .attr("class", "node")
-      .attr("transform", d => `translate(${d.x},${d.y})`);
-    nodeEnter.append("rect")
+      .attr("transform", (d) => `translate(${d.x},${d.y})`);
+    nodeEnter
+      .append("rect")
       .attr("width", 40)
       .attr("height", 30)
       .attr("x", -20)
       .attr("y", -15)
-      .attr("fill", d => d.functionality === 1 ? "lightgreen" : "lightcoral")
+      .attr("fill", (d) =>
+        d.functionality === 1 ? "lightgreen" : "lightcoral"
+      )
       .attr("stroke", "gray")
       .attr("stroke-width", 1.5);
-    nodeEnter.append("text")
+    nodeEnter
+      .append("text")
       .attr("dy", 4)
       .attr("text-anchor", "middle")
       .attr("font-size", "10px")
-      .text(d => d.id);
+      .text((d) => d.id);
 
     // Reapply zoom
     if (zoomRef.current) {
@@ -124,9 +138,10 @@ export default function HasseDiagram({ diagramData, editing, onChange }: HasseDi
     const svg = d3.select(svgRef.current!);
     svg.on(".zoom", null);
 
-    const zoomBehavior = d3.zoom<SVGSVGElement, unknown>()
+    const zoomBehavior = d3
+      .zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.5, 5])
-      .filter(event => {
+      .filter((event) => {
         return !editing;
       })
       .on("zoom", (event) => {
@@ -174,12 +189,13 @@ export default function HasseDiagram({ diagramData, editing, onChange }: HasseDi
         })
         .style("pointer-events", "all");
     } else {
-      nodeSelection.on("click", null)
-                   .on("mouseover", null)
-                   .on("mouseout", null)
-                   .style("pointer-events", "none");
+      nodeSelection
+        .on("click", null)
+        .on("mouseover", null)
+        .on("mouseout", null)
+        .style("pointer-events", "none");
     }
   }, [editing]);
 
   return <svg ref={svgRef}></svg>;
-};
+}
