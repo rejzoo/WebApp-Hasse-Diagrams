@@ -47,13 +47,22 @@ public class DiagramService {
      * Saves the created diagram into the database
      *
      * @param data for diagram creation
+     * @return boolean value, if is not null diagram was saved
      */
-    public void saveDiagram(ElementDataWrapper data) {
+    public boolean saveDiagram(ElementDataWrapper data) {
         Diagram diagramToSave = createDiagram(data);
 
-        diagramRepository.save(diagramToSave);
+        Diagram savedDiagram = diagramRepository.save(diagramToSave);
+        return savedDiagram.getDiagram_id() != null;
     }
 
+    /**
+     * Updates diagram with corresponding id
+     *
+     * @param id for diagram to update
+     * @param data which will be updated
+     * @return returns number of updated rows
+     */
     @Transactional
     public int updateDiagramFunctionality(Integer id, DiagramData data) {
         try {
@@ -164,6 +173,12 @@ public class DiagramService {
         return levelDifference == 1;
     }
 
+    /**
+     * Helper function to construct DiagramData
+     *
+     * @param data needed to construct DiagramData
+     * @return created instance of DiagramData
+     */
     private DiagramData constructDiagramData(ElementDataWrapper data) {
         int numberOfElements = data.getNumberOfElements();
         int numberOfRows = (int) Math.pow(2, numberOfElements);

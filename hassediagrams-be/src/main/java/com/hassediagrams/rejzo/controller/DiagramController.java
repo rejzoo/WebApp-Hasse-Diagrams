@@ -5,6 +5,7 @@ import com.hassediagrams.rejzo.dto.ElementDataWrapper;
 import com.hassediagrams.rejzo.model.Diagram;
 import com.hassediagrams.rejzo.service.DiagramService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class DiagramController {
     /**
      * Fetches diagram from database
      *
+     * @param id id for wanted diagram
      * @return returns diagram json data
      */
     @GetMapping("/{id}")
@@ -57,16 +59,35 @@ public class DiagramController {
      */
     @PostMapping("/create")
     public ResponseEntity<String> createDiagram(@Valid @RequestBody ElementDataWrapper data) {
-        diagramService.saveDiagram(data);
+        boolean result = diagramService.saveDiagram(data);
 
-        return ResponseEntity.ok("API Called");
+        String resultMessage = result ? "Diagram created and saved." : "Diagram was not saved.";
+
+        if (result) {
+            return ResponseEntity.ok(resultMessage);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resultMessage);
+        }
     }
 
+    /**
+     * Updates functionality for the diagram with id
+     *
+     * @param id diagram_id to be updated
+     * @param data new data
+     * @return returns status
+     */
     @PostMapping("/update/{id}")
-    public ResponseEntity<Boolean> updateFunctionality(@PathVariable String id, @RequestBody DiagramData data) {
+    public ResponseEntity<String> updateFunctionality(@PathVariable String id, @RequestBody DiagramData data) {
         int rowsUpdated = diagramService.updateDiagramFunctionality(Integer.valueOf(id), data);
         boolean result = (rowsUpdated == 1);
 
-        return ResponseEntity.ok(result);
+        String resultMessage = result ? "Diagram updated." : "Diagram not updated.";
+
+        if (result) {
+            return ResponseEntity.ok(resultMessage);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resultMessage);
+        }
     }
 }
