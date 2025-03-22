@@ -1,25 +1,31 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import TableHeader from './TableHeader';
-import TableRow from './TableRow';
-import { calculateRows, calculateCombinations } from '@/utils/tableUtils';
-import { RowData } from '@/types/table';
-import { diagramNameRegex } from '@/utils/regex';
+import React, { useEffect, useRef, useState } from "react";
+import TableHeader from "./TableHeader";
+import TableRow from "./TableRow";
+import { calculateRows, calculateCombinations } from "@/utils/tableUtils";
+import { RowData } from "@/types/table";
+import { diagramNameRegex } from "@/utils/regex";
 
 interface TableProps {
   numberOfElements: number;
   manualInput: boolean;
 }
 
-export default function InputTable({ numberOfElements, manualInput }: TableProps) {
-  const [responseMsg, setResponseMsg] = useState('');
+export default function InputTable({
+  numberOfElements,
+  manualInput,
+}: TableProps) {
+  const [responseMsg, setResponseMsg] = useState("");
   const [responseErr, setResponseErr] = useState(false);
   const [combinations, setCombinations] = useState<number[][]>([]);
   const [rows, setRows] = useState<RowData[]>(calculateRows(numberOfElements));
-  const headers = Array.from({ length: numberOfElements }, (_, i) => `X${i + 1}`);
+  const headers = Array.from(
+    { length: numberOfElements },
+    (_, i) => `X${i + 1}`
+  );
   const inputRef = useRef<HTMLInputElement>(null);
-  const [diagramName, setDiagramName] = useState<string>('');
+  const [diagramName, setDiagramName] = useState<string>("");
   const [error, setError] = useState(false);
   const [highlightSystem, setHighlightSystem] = useState(false);
 
@@ -29,18 +35,22 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
     setCombinations(combos);
   }, [numberOfElements]);
 
-  const handleElementClick = (rowIndex: number, colIndex: number, value: number | null) => {
+  const handleElementClick = (
+    rowIndex: number,
+    colIndex: number,
+    value: number | null
+  ) => {
     const newRows = [...rows];
     newRows[rowIndex].elements[colIndex] = value;
     setRows(newRows);
-    setResponseMsg('');
+    setResponseMsg("");
   };
 
   const handleSystemClick = (rowIndex: number, value: number | null) => {
     const newRows = [...rows];
     newRows[rowIndex].system = value;
     setRows(newRows);
-    setResponseMsg('');
+    setResponseMsg("");
   };
 
   const isValidName = () => {
@@ -56,10 +66,10 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
     }
 
     return true;
-  }
+  };
 
   const allSystemInputFilled = () => {
-    if (rows.some(row => row.system === null)) {
+    if (rows.some((row) => row.system === null)) {
       setHighlightSystem(true);
       setResponseMsg("Input all of the functionality rows");
       setResponseErr(true);
@@ -67,10 +77,10 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
     }
 
     return true;
-  }
+  };
 
   const createFunction = async () => {
-    setResponseMsg('');
+    setResponseMsg("");
     // Consult this
     // if (!isValidName() || !allSystemInputFilled()) {
     //   return;
@@ -78,7 +88,7 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
 
     const data = rows.map((row, index) => ({
       [`elements${index + 1}`]: manualInput
-        ? row.elements.map(val => (val === null ? 0 : val))
+        ? row.elements.map((val) => (val === null ? 0 : val))
         : combinations[index],
       [`functional${index + 1}`]: row.system === null ? 0 : row.system,
     }));
@@ -90,42 +100,44 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(finalData),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(finalData),
+        }
+      );
 
-      console.log(JSON.stringify(finalData));
+      // console.log(JSON.stringify(finalData));
 
-      if (!response.ok) {
-        const errorResponse = await response.json();
+      if (response.ok) {
+        const res = await response.text();
+        setResponseMsg(res);
+        setResponseErr(false);
+      } else if (!response.ok) {
+        const errorResponse = await response.text();
         setResponseErr(true);
-        setResponseMsg(errorResponse.diagramName);
-        return;
+        setResponseMsg(errorResponse);
       }
-
-      const text = await response.text();
-      setResponseMsg(text);
-      setResponseErr(false);
     } catch (error) {
-      setResponseMsg('Error submitting data: ' + error);
+      setResponseMsg("Error submitting data: " + error);
       setResponseErr(true);
     }
-    
+
     clearValues(false);
   };
 
   const clearValues = (isClearButton: boolean) => {
     setRows(calculateRows(numberOfElements));
-    setDiagramName('');
+    setDiagramName("");
     setError(false);
     setHighlightSystem(false);
-    
+
     if (isClearButton) {
-      setResponseMsg('');
+      setResponseMsg("");
     }
   };
 
@@ -140,16 +152,22 @@ export default function InputTable({ numberOfElements, manualInput }: TableProps
           required
           value={diagramName}
           onChange={(e) => {
-            setResponseMsg('');
-            setDiagramName(e.target.value)
+            setResponseMsg("");
+            setDiagramName(e.target.value);
           }}
           className={`rounded-md h-8 px-2 max-w-96 text-white bg-[var(--itemsbackground)] focus:outline-none focus:ring-1 ${
-            error ? 'border-red-500 focus:ring-red-500' : 'focus:ring-white'
+            error ? "border-red-500 focus:ring-red-500" : "focus:ring-white"
           }`}
-          />
+        />
       </div>
 
-      <p className={`px-4 pb-4 min-h-10 ${responseErr ? 'text-red-600' : 'text-green-500' }`}>{responseMsg}</p>
+      <p
+        className={`px-4 pb-4 min-h-10 ${
+          responseErr ? "text-red-600" : "text-green-500"
+        }`}
+      >
+        {responseMsg}
+      </p>
 
       <div className="flex justify-center">
         <div className="custom-scrollbar inline-block overflow-auto max-h-[60vh] bg-[var(--itemsbackground)]/15 rounded-2xl shadow-md shadow-gray-800">
