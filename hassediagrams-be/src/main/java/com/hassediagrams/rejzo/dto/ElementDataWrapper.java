@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Pattern;
 
 import java.util.List;
 
+/**
+ * Class which wraps receiving data from FE
+ */
 @Getter
 public class ElementDataWrapper {
 

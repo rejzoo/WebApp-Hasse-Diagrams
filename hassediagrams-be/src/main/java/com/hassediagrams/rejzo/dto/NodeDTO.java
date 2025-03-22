@@ -5,6 +5,9 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * Class representing Node in the diagram
+ */
 @AllArgsConstructor
 @Getter
 public class NodeDTO {

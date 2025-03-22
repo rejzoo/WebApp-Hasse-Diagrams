@@ -9,6 +9,9 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
+/**
+ * Table entity
+ */
 @Entity
 @Table(name = "diagrams")
 @Getter

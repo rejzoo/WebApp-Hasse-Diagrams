@@ -6,6 +6,9 @@ import lombok.Getter;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class representing data for 1 element for 1 combination
+ */
 @Getter
 public class ElementData {
     private List<Integer> elements;
