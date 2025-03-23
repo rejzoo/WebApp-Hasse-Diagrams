@@ -170,7 +170,7 @@ export default function InputTable({
       </p>
 
       <div className="flex justify-center">
-        <div className="custom-scrollbar inline-block overflow-auto max-h-[60vh] bg-[var(--itemsbackground)]/15 rounded-2xl shadow-md shadow-gray-800">
+        <div className="custom-scrollbar inline-block overflow-auto max-h-[50vh] bg-[var(--itemsbackground)]/15 rounded-2xl shadow-md shadow-gray-800">
           <table className="w-auto border-collapse">
             <TableHeader headers={headers} />
             <tbody>
