@@ -6,7 +6,6 @@ import com.hassediagrams.rejzo.dto.*;
 import com.hassediagrams.rejzo.model.Diagram;
 import com.hassediagrams.rejzo.repository.DiagramRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -72,14 +71,14 @@ public class DiagramService {
     public boolean updateDiagramFunctionality(Integer id, DiagramData data) {
         try {
             String jsonStructure = objectMapper.writeValueAsString(data);
-            int updatedStructureRows = diagramRepository.updateDiagramStructure(id, jsonStructure);
+            boolean updated = 1 == diagramRepository.updateDiagramStructure(id, jsonStructure);
 
-            // TODO I dont like this
-            if (updatedStructureRows == 1) {
+            // TODO
+            if (updated) {
                 graphService.processCriticalElements(id, data);
             }
 
-            return updatedStructureRows == 1;
+            return updated;
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error converting DiagramData to JSON", e);
         }
@@ -152,7 +151,7 @@ public class DiagramService {
 
                 NodeDTO nodeB = nodes.get(j);
                 if (edgeExists(nodeA.getElements(), nodeB.getElements())) {
-                    edges.add(new EdgeDTO(nodeA.getId(), nodeB.getId()));
+                    edges.add(new EdgeDTO(nodeB.getId(), nodeA.getId()));
                 }
             }
         }
