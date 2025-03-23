@@ -23,3 +23,7 @@ export interface Diagram {
     diagram_elements_count: number;
     diagram_data: DiagramData;
 }
+
+export interface CriticalElements {
+    [key: string]: string[][];
+}

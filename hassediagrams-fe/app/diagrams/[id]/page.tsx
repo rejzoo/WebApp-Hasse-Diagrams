@@ -2,9 +2,10 @@
 
 import HasseDiagram from "@/components/Diagram/HasseDiagram";
 import { use, useEffect, useRef, useState } from "react";
-import { Diagram, DiagramData } from "@/types/diagram";
+import { CriticalElements, Diagram, DiagramData } from "@/types/diagram";
 import ToggleButton from "@/components/UI/ToggleButton";
 import Collapsible from "@/components/UI/Collapsible";
+import CriticalElementsLevel from "@/components/Diagram/CriticalElementsLevel";
 
 export default function DiagramPage({
   params,
@@ -16,6 +17,8 @@ export default function DiagramPage({
   const [editing, setEditing] = useState<boolean>(false);
   const [responseMsg, setResponseMsg] = useState<String>("");
   const [responseErr, setResponseErr] = useState<boolean>(false);
+  const [criticalElements, setCriticalElements] =
+    useState<CriticalElements | null>(null);
 
   const baselineDiagramRef = useRef<Diagram | null>(null);
 
@@ -43,8 +46,24 @@ export default function DiagramPage({
       }
     };
 
+    // TODO
+    const fetchCriticalElements = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/critElements/${id}`,
+          {
+            method: "GET",
+          }
+        );
+        const data: CriticalElements = await response.json();
+        setCriticalElements(data);
+        console.log(data);
+      } catch (error: any) {}
+    };
+
     fetchDiagrams();
-  }, []);
+    fetchCriticalElements();
+  }, [baselineDiagramRef]);
 
   const handleDiagramChange = (updatedDiagramData: any) => {
     setDiagram({ ...diagram!, diagram_data: updatedDiagramData });
@@ -112,7 +131,7 @@ export default function DiagramPage({
   return (
     <div className="space-y-10">
       <Collapsible title="Diagram information" opened={false}>
-        <div className="flex flex-row space-x-10 text-ml">
+        <div className="flex flex-row space-x-10 text-ml font-mono">
           <div className="flex flex-col">
             <p>Diagram name:</p>
             <p>Created by:</p>
@@ -179,7 +198,16 @@ export default function DiagramPage({
       </Collapsible>
 
       <Collapsible title="Critical elements" opened={false}>
-        <p>NOT IMPLEMENTED</p>
+        <div className="font-mono text-ml">
+          {criticalElements &&
+            Object.entries(criticalElements).map(([level, elementsList]) => (
+              <CriticalElementsLevel
+                key={level}
+                level={level}
+                elements={elementsList}
+              />
+            ))}
+        </div>
       </Collapsible>
     </div>
   );
