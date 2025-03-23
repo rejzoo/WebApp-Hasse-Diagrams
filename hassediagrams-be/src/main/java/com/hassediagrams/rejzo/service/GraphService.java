@@ -32,7 +32,8 @@ public class GraphService {
     @Async
     @Transactional
     public void processCriticalElements(Integer diagramId, DiagramData diagramData) {
-        System.out.println("ASYNC STARTED");
+        double start = (double) System.currentTimeMillis() / 1000;
+        System.out.println("ASYNC STARTED time: " + start);
 
         List<NodeDTO> nodes = diagramData.getNodes().stream()
                 .sorted(Comparator.comparingInt(NodeDTO::getLevel))
@@ -50,6 +51,7 @@ public class GraphService {
         }
 
         System.out.println("ASYNC ENDED, UPDATED: " + updatedRows);
+        System.out.println("TIME: " + System.currentTimeMillis() + " | " + ((double) System.currentTimeMillis() / 1000 - start));
     }
 
     /**
@@ -75,7 +77,7 @@ public class GraphService {
 
             if (node.getLevel() - 1 == actualLevel) {
                 actualLevel = node.getLevel();
-                criticalNodes.put("level" + actualLevel, new ArrayList<>());
+                criticalNodes.put("" + actualLevel, new ArrayList<>());
             }
 
             if (node.getFunctionality() == 0) {
@@ -95,7 +97,7 @@ public class GraphService {
             }
 
             if (isValid) {
-                criticalNodes.get("level" + actualLevel).add(node.getFunctionalElements());
+                criticalNodes.get("" + actualLevel).add(node.getFunctionalElements());
             }
         }
 

@@ -1,6 +1,7 @@
 package com.hassediagrams.rejzo.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hassediagrams.rejzo.dto.*;
 import com.hassediagrams.rejzo.model.Diagram;
@@ -35,10 +36,26 @@ public class DiagramService {
      * Finds diagram by id
      *
      * @param id of the diagram
-     * @return returns diagram with param id
+     * @return diagram with param id
      */
     public Optional<Diagram> findDiagram(Integer id) {
         return diagramRepository.findById(id);
+    }
+
+    /**
+     * Finds critical elements
+     *
+     * @param id of the diagram
+     * @return critical elements
+     */
+    public Map<String, List<List<String>>> findCriticalElements(Integer id) {
+        String json = diagramRepository.findCriticalElements(id);
+        try {
+            return objectMapper.readValue(json, new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error parsing critical elements", e);
+        }
     }
 
     /**

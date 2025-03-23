@@ -20,4 +20,6 @@ public interface DiagramRepository extends CrudRepository<Diagram, Integer> {
     @Query(value = "UPDATE diagrams SET critical_elements = cast(:criticalElements as jsonb) WHERE diagram_id = :id", nativeQuery = true)
     int updateCriticalElements(@Param("id") Integer id, @Param("criticalElements") String computedNodes);
 
+    @Query(value = "SELECT critical_elements FROM diagrams WHERE diagram_id = :id", nativeQuery = true)
+    String findCriticalElements(@Param("id") Integer id);
 }

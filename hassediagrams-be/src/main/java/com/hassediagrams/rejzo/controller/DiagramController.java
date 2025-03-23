@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -41,12 +42,25 @@ public class DiagramController {
     /**
      * Fetches diagram from database
      *
-     * @param id id for wanted diagram
-     * @return returns diagram json data
+     * @param id for wanted diagram
+     * @return diagram json data
      */
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Diagram>> fetchDiagram(@PathVariable String id) {
         Optional<Diagram> json = diagramService.findDiagram(Integer.valueOf(id));
+
+        return ResponseEntity.ok(json);
+    }
+
+    /**
+     * Fetches critical elements for diagram
+     *
+     * @param id for wanted diagram
+     * @return critical elements
+     */
+    @GetMapping("/critElements/{id}")
+    public ResponseEntity<Map<String, List<List<String>>>> fetchCriticalElements(@PathVariable String id) {
+        Map<String, List<List<String>>> json = diagramService.findCriticalElements(Integer.valueOf(id));
 
         return ResponseEntity.ok(json);
     }
