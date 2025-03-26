@@ -128,6 +128,10 @@ export default function DiagramPage({
     }
   };
 
+  const cancelEdit = () => {
+    setDiagram(JSON.parse(JSON.stringify(baselineDiagramRef.current)));
+  };
+
   return (
     <div className="space-y-10">
       <Collapsible title="Diagram information" opened={false}>
@@ -156,15 +160,30 @@ export default function DiagramPage({
           <>
             <div className="flex pb-8 justify-between">
               <ToggleButton onToggle={handleToggle} />
-              <button
-                onClick={handleSave}
-                disabled={!isDiagramChanged()}
-                className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
-                  !isDiagramChanged() ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                SAVE
-              </button>
+              <div className="mt-auto space-x-4">
+                <button
+                  onClick={handleSave}
+                  disabled={!isDiagramChanged()}
+                  className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
+                    !isDiagramChanged()
+                      ? "opacity-50 cursor-not-allowed"
+                      : "bg-green-500 hover:bg-green-600"
+                  }`}
+                >
+                  SAVE
+                </button>
+                <button
+                  onClick={cancelEdit}
+                  disabled={!isDiagramChanged()}
+                  className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
+                    !isDiagramChanged()
+                      ? "opacity-50 cursor-not-allowed"
+                      : "bg-red-500 hover:bg-red-600"
+                  }`}
+                >
+                  CANCEL
+                </button>
+              </div>
             </div>
 
             <p

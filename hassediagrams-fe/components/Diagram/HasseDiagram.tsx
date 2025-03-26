@@ -3,6 +3,7 @@
 import React, { useRef, useEffect } from "react";
 import { NodeData, DiagramData } from "@/types/diagram";
 import * as d3 from "d3";
+import { RxReset } from "react-icons/rx";
 
 interface HasseDiagramProps {
   diagramData: DiagramData;
@@ -17,6 +18,10 @@ export default function HasseDiagram({
 }: HasseDiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<d3.ZoomTransform | null>(null);
+  const zoomBehaviorRef = useRef<d3.ZoomBehavior<
+    SVGSVGElement,
+    unknown
+  > | null>(null);
 
   // Init once
   useEffect(() => {
@@ -93,7 +98,8 @@ export default function HasseDiagram({
       .attr("x2", (d) => nodeById[d.to].x!)
       .attr("y2", (d) => nodeById[d.to].y!)
       .attr("stroke", "gray")
-      .attr("stroke-width", 2);
+      .attr("stroke-width", 2)
+      .attr("data-from", (d) => d.from);
 
     // Draw nodes
     const nodeSelection = container
@@ -150,6 +156,7 @@ export default function HasseDiagram({
         container.attr("transform", event.transform.toString());
       });
     svg.call(zoomBehavior);
+    zoomBehaviorRef.current = zoomBehavior;
 
     if (zoomRef.current) {
       const container = svg.select(".diagram-container");
@@ -180,12 +187,28 @@ export default function HasseDiagram({
             .select("rect")
             .attr("stroke", d.functionality === 1 ? "lightcoral" : "lightgreen")
             .attr("stroke-width", 3);
+
+          container
+            .selectAll("line.edge")
+            .filter(
+              (edgeData: any) => edgeData.from === d.id || edgeData.to === d.id
+            )
+            .attr("stroke", d.functionality === 1 ? "lightcoral" : "lightgreen")
+            .attr("stroke-width", 3);
         })
         .on("mouseout", (event, d) => {
           d3.select(event.currentTarget)
             .select("rect")
             .attr("stroke", "gray")
             .attr("stroke-width", 1.5);
+
+          container
+            .selectAll("line.edge")
+            .filter(
+              (edgeData: any) => edgeData.from === d.id || edgeData.to === d.id
+            )
+            .attr("stroke", "gray")
+            .attr("stroke-width", 2);
         })
         .style("pointer-events", "all");
     } else {
@@ -195,7 +218,28 @@ export default function HasseDiagram({
         .on("mouseout", null)
         .style("pointer-events", "none");
     }
-  }, [editing]);
+  }, [editing, diagramData]);
 
-  return <svg ref={svgRef}></svg>;
+  const resetCamera = () => {
+    const svg = d3.select(svgRef.current!);
+    svg
+      .transition()
+      .duration(500)
+      .call(zoomBehaviorRef.current!.transform, d3.zoomIdentity)
+      .on("end", () => {
+        zoomRef.current = d3.zoomIdentity;
+      });
+  };
+
+  return (
+    <div className="relative">
+      <svg ref={svgRef}></svg>
+      <button
+        onClick={resetCamera}
+        className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+      >
+        <RxReset size={20}/>
+      </button>
+    </div>
+  );
 }
