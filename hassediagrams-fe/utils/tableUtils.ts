@@ -1,5 +1,12 @@
 import { RowData } from "@/types/table";
+import { diagramNameRegex } from "./regex";
 
+/**
+ * Calculates and creates number of rows for input table
+ * 
+ * @param numElements 
+ * @returns 
+ */
 export function calculateRows(numElements: number): RowData[] {
   return Array.from({ length: 2 ** numElements }, () => ({
     elements: Array.from({ length: numElements }, () => null),
@@ -7,6 +14,12 @@ export function calculateRows(numElements: number): RowData[] {
   }));
 }
 
+/**
+ * Calculates binary combinations
+ * 
+ * @param numberOfElements 
+ * @returns 
+ */
 export function calculateCombinations(numberOfElements: number): number[][] {
   const total = 2 ** numberOfElements;
   const combinations: number[][] = [];
@@ -20,3 +33,24 @@ export function calculateCombinations(numberOfElements: number): number[][] {
   }
   return combinations;
 }
+
+/**
+ * Validation function for diagram name
+ * 
+ * @param diagramName 
+ * @returns 
+ */
+export const isValidName = (diagramName: string): boolean => {
+  const trimmedName = diagramName.trim();
+  return trimmedName !== "" && diagramNameRegex.test(trimmedName);
+};
+
+/**
+ * Validation function for table input
+ * 
+ * @param diagramName 
+ * @returns 
+ */
+export const allSystemInputFilled = (rows: RowData[]): boolean => {
+  return !rows.some((row) => row.system === null);
+};

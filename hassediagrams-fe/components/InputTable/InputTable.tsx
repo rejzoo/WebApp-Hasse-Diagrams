@@ -3,9 +3,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import TableHeader from "./TableHeader";
 import TableRow from "./TableRow";
-import { calculateRows, calculateCombinations } from "@/utils/tableUtils";
+import {
+  calculateRows,
+  calculateCombinations,
+  isValidName,
+  allSystemInputFilled,
+} from "@/utils/tableUtils";
 import { RowData } from "@/types/table";
-import { diagramNameRegex } from "@/utils/regex";
 
 interface TableProps {
   numberOfElements: number;
@@ -53,38 +57,51 @@ export default function InputTable({
     setResponseMsg("");
   };
 
-  const isValidName = () => {
-    if (!diagramName.trim() || !diagramNameRegex.test(diagramName.trim())) {
+  const fillMissingSystemWith = (value: number) => {
+    const newRows = rows.map((row) =>
+      row.system === null ? { ...row, system: value } : row
+    );
+    setRows(newRows);
+  };
+
+  const canCreateDiagram = () => {
+    const validName = isValidName(diagramName);
+    const systemsFilled = allSystemInputFilled(rows);
+
+    return validName && systemsFilled;
+  };
+
+  const validInput = () => {
+    setResponseMsg("");
+
+    // Consult this
+    let result = true;
+    if (!isValidName(diagramName)) {
       if (inputRef.current) {
         setError(true);
         inputRef.current.focus();
       }
       setResponseMsg("Input the valid name");
       setResponseErr(true);
-
-      return false;
+      result = false;
     }
-
-    return true;
-  };
-
-  const allSystemInputFilled = () => {
-    if (rows.some((row) => row.system === null)) {
+    if (!allSystemInputFilled(rows)) {
       setHighlightSystem(true);
-      setResponseMsg("Input all of the functionality rows");
+      if (result) {
+        setResponseMsg("Input all of the functionality rows");
+      }
       setResponseErr(true);
-      return false;
+      result = false;
     }
-
-    return true;
+    return result;
   };
 
   const createFunction = async () => {
     setResponseMsg("");
-    // Consult this
-    // if (!isValidName() || !allSystemInputFilled()) {
-    //   return;
-    // }
+
+    if (!validInput()) {
+      return;
+    }
 
     const data = rows.map((row, index) => ({
       [`elements${index + 1}`]: manualInput
@@ -143,22 +160,40 @@ export default function InputTable({
 
   return (
     <>
-      <div className="space-x-4 pb-4 px-4 items-center">
-        <span className="text-xl">Name of the diagram</span>
-        <input
-          ref={inputRef}
-          inputMode="text"
-          placeholder="Name"
-          required
-          value={diagramName}
-          onChange={(e) => {
-            setResponseMsg("");
-            setDiagramName(e.target.value);
-          }}
-          className={`rounded-md h-8 px-2 max-w-96 text-white bg-[var(--itemsbackground)] focus:outline-none focus:ring-1 ${
-            error ? "border-red-500 focus:ring-red-500" : "focus:ring-white"
-          }`}
-        />
+      <div className="pb-4 px-4 items-center space-y-4">
+        <div className="space-x-4">
+          <span className="text-xl">Name of the diagram</span>
+          <input
+            ref={inputRef}
+            inputMode="text"
+            placeholder="Name"
+            required
+            value={diagramName}
+            onChange={(e) => {
+              setResponseMsg("");
+              setDiagramName(e.target.value);
+              setError(false);
+            }}
+            className={`rounded-md h-8 px-2 max-w-96 text-white bg-[var(--itemsbackground)] focus:outline-none focus:ring-1 ${
+              error ? "border-red-500 focus:ring-red-500" : "focus:ring-white"
+            }`}
+          />
+        </div>
+        <div className="space-x-2">
+          <span className="text-xl">Fill missing SYSTEM values with</span>
+          <button
+            className="rounded-md h-9 w-9 px-2 bg-[var(--itemsbackground)] text-xl hover:bg-red-500"
+            onClick={() => fillMissingSystemWith(0)}
+          >
+            0
+          </button>
+          <button
+            className="rounded-md h-9 w-9 px-2 bg-[var(--itemsbackground)] text-xl hover:bg-red-500"
+            onClick={() => fillMissingSystemWith(1)}
+          >
+            1
+          </button>
+        </div>
       </div>
 
       <p
@@ -194,7 +229,11 @@ export default function InputTable({
 
       <div className="flex items-center justify-center rounded-md transition-colors text-lg pt-5 space-x-5">
         <button
-          className="w-20 h-10 bg-[var(--itemsbackground)] rounded-md"
+          className={`w-20 h-10 rounded-md transition-colors ${
+            canCreateDiagram()
+              ? "bg-green-500 hover:bg-green-600"
+              : "bg-[var(--itemsbackground)]"
+          }`}
           onClick={createFunction}
         >
           Create
