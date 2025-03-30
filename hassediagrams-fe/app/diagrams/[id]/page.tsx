@@ -7,6 +7,8 @@ import ToggleButtons from "@/components/UI/ToggleButtons";
 import Collapsible from "@/components/UI/Collapsible";
 import CriticalStatesLevel from "@/components/Diagram/CriticalElementsLevel";
 import EditableField from "@/components/UI/EditableField";
+import EditTable from "@/components/EditTable/EditTable";
+import { isDiagramChanged } from "@/utils/tableUtils";
 
 export default function DiagramPage({
   params,
@@ -91,28 +93,13 @@ export default function DiagramPage({
     setDiagram({ ...diagram!, diagram_data: updatedDiagramData });
   };
 
-  const isDiagramChanged = (): boolean => {
-    if (!diagram || !baselineDiagramRef.current) return false;
-
-    const currentNodes = diagram.diagram_data.nodes;
-    const baselineNodes = baselineDiagramRef.current.diagram_data.nodes;
-    if (currentNodes.length !== baselineNodes.length) return true;
-
-    for (let i = 0; i < currentNodes.length; i++) {
-      if (currentNodes[i].functionality !== baselineNodes[i].functionality) {
-        return true;
-      }
-    }
-    return false;
-  };
-
   const prepareDiagramData = (data: DiagramData): DiagramData => ({
     ...data,
     nodes: data.nodes.map(({ x, y, ...rest }) => rest),
   });
 
   const handleSave = async () => {
-    if (isDiagramChanged() && diagram) {
+    if (isDiagramChanged(diagram, baselineDiagramRef) && diagram) {
       try {
         const strippedData = prepareDiagramData(diagram.diagram_data);
 
@@ -157,7 +144,10 @@ export default function DiagramPage({
     setDiagram(JSON.parse(JSON.stringify(baselineDiagramRef.current)));
   };
 
-  const updateInformation = async (newDiagramName: string, newVisibility: string) => {
+  const updateInformation = async (
+    newDiagramName: string,
+    newVisibility: string
+  ) => {
     if (!diagram) {
       return;
     }
@@ -247,9 +237,9 @@ export default function DiagramPage({
               <div className="mt-auto space-x-4">
                 <button
                   onClick={handleSave}
-                  disabled={!isDiagramChanged()}
+                  disabled={!isDiagramChanged(diagram, baselineDiagramRef)}
                   className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
-                    !isDiagramChanged()
+                    !isDiagramChanged(diagram, baselineDiagramRef)
                       ? "opacity-50 cursor-not-allowed"
                       : "bg-green-500 hover:bg-green-600"
                   }`}
@@ -258,9 +248,9 @@ export default function DiagramPage({
                 </button>
                 <button
                   onClick={cancelEdit}
-                  disabled={!isDiagramChanged()}
+                  disabled={!isDiagramChanged(diagram, baselineDiagramRef)}
                   className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
-                    !isDiagramChanged()
+                    !isDiagramChanged(diagram, baselineDiagramRef)
                       ? "opacity-50 cursor-not-allowed"
                       : "bg-red-500 hover:bg-red-600"
                   }`}
@@ -296,6 +286,40 @@ export default function DiagramPage({
               {baselineDiagramRef.current?.diagram_elements_count} elements and
               is not rendered.
             </p>
+            {diagram && (
+              <>
+                <div className="flex justify-end space-x-4">
+                  <button
+                    className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
+                      !isDiagramChanged(diagram, baselineDiagramRef)
+                        ? "opacity-50 cursor-not-allowed"
+                        : "bg-green-500 hover:bg-green-600"
+                    }`}
+                    onClick={handleSave}
+                    disabled={!isDiagramChanged(diagram, baselineDiagramRef)}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className={`items-center w-20 py-2 rounded-md bg-[var(--itemsbackground)] hover:bg-[#26233d] ${
+                      !isDiagramChanged(diagram, baselineDiagramRef)
+                        ? "opacity-50 cursor-not-allowed"
+                        : "bg-red-500 hover:bg-red-600"
+                    }`}
+                    onClick={cancelEdit}
+                    disabled={!isDiagramChanged(diagram, baselineDiagramRef)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <EditTable
+                  diagram={diagram}
+                  baselineDiagram={baselineDiagramRef}
+                  onChange={handleDiagramChange}
+                  numberOfElements={diagram.diagram_elements_count}
+                />
+              </>
+            )}
           </div>
         )}
       </Collapsible>

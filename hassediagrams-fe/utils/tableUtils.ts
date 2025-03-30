@@ -1,5 +1,7 @@
 import { RowData } from "@/types/table";
 import { diagramNameRegex } from "./regex";
+import { Diagram } from "@/types/diagram";
+import { RefObject } from "react";
 
 /**
  * Calculates and creates number of rows for input table
@@ -53,4 +55,24 @@ export const isValidName = (diagramName: string): boolean => {
  */
 export const allSystemInputFilled = (rows: RowData[]): boolean => {
   return !rows.some((row) => row.system === null);
+};
+
+/**
+ * Checks if the diagram was changed by user
+ * 
+ * @returns 
+ */
+export const isDiagramChanged = (diagram: Diagram | undefined, baselineDiagramRef: RefObject<Diagram | null>): boolean => {
+  if (!diagram || !baselineDiagramRef.current) return false;
+
+  const currentNodes = diagram.diagram_data.nodes;
+  const baselineNodes = baselineDiagramRef.current.diagram_data.nodes;
+  if (currentNodes.length !== baselineNodes.length) return true;
+
+  for (let i = 0; i < currentNodes.length; i++) {
+    if (currentNodes[i].functionality !== baselineNodes[i].functionality) {
+      return true;
+    }
+  }
+  return false;
 };

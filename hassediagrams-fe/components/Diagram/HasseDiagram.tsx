@@ -238,7 +238,7 @@ export default function HasseDiagram({
         onClick={resetCamera}
         className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
       >
-        <RxReset size={20}/>
+        <RxReset size={20} />
       </button>
     </div>
   );

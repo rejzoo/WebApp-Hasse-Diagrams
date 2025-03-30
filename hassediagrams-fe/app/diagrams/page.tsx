@@ -24,7 +24,12 @@ export default function DiagramsPage() {
         const transformed: Diagram[] = result.map(
           (diagramObj: any) => diagramObj
         );
-        setDiagramData(transformed);
+
+        if (transformed.length == 0) {
+          setDiagramData(null);
+        } else {
+          setDiagramData(transformed);
+        }
       } catch (error) {
         console.error("Error fetching diagram:", error);
       }
@@ -48,7 +53,10 @@ export default function DiagramsPage() {
           />
         ))
       ) : (
-        <p>No diagrams :{"("}</p>
+        <div className="flex flex-col justify-center text-center text-xl mt-16">
+          <p>No diagrams :{"("}</p>
+          <p>To create diagram navigate to Create page.</p>
+        </div>
       )}
     </div>
   );

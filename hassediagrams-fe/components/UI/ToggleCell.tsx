@@ -7,11 +7,8 @@ export default function ToggleCell({
   currentValue,
   onSelect,
 }: ToggleCellProps) {
-  const width = 14;
-  const height = 10;
-
   return (
-    <div className="flex space-x-1">
+    <div className="inline-flex items-center justify-center space-x-1">
       <button
         onClick={() => onSelect(0)}
         className={`w-14 h-10 rounded-md transition-colors text-xl
