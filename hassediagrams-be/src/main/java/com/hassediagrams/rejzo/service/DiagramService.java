@@ -50,9 +50,13 @@ public class DiagramService {
      */
     public Map<String, List<List<String>>> findCriticalElements(Integer id) {
         String json = diagramRepository.findCriticalElements(id);
+
+        if (json == null || json.trim().isEmpty()) {
+            return new HashMap<>();
+        }
+
         try {
-            return objectMapper.readValue(json, new TypeReference<>() {
-            });
+            return objectMapper.readValue(json, new TypeReference<>(){});
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error parsing critical elements", e);
         }
@@ -90,7 +94,6 @@ public class DiagramService {
             String jsonStructure = objectMapper.writeValueAsString(data);
             boolean updated = 1 == diagramRepository.updateDiagramStructure(id, jsonStructure);
 
-            // TODO
             if (updated) {
                 diagramRepository.clearCriticalStates(id);
                 graphService.processCriticalStates(id, data);
