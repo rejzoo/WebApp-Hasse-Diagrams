@@ -1,6 +1,5 @@
 package com.hassediagrams.rejzo.repository;
 
-import com.hassediagrams.rejzo.dto.DiagramData;
 import com.hassediagrams.rejzo.model.Diagram;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
@@ -17,9 +16,14 @@ public interface DiagramRepository extends CrudRepository<Diagram, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE diagrams SET critical_elements = cast(:criticalElements as jsonb) WHERE diagram_id = :id", nativeQuery = true)
-    int updateCriticalElements(@Param("id") Integer id, @Param("criticalElements") String computedNodes);
+    @Query(value = "UPDATE diagrams SET critical_states = cast(:criticalStates as jsonb) WHERE diagram_id = :id", nativeQuery = true)
+    void updateCriticalElements(@Param("id") Integer id, @Param("criticalStates") String computedNodes);
 
-    @Query(value = "SELECT critical_elements FROM diagrams WHERE diagram_id = :id", nativeQuery = true)
+    @Query(value = "SELECT critical_states FROM diagrams WHERE diagram_id = :id", nativeQuery = true)
     String findCriticalElements(@Param("id") Integer id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE diagrams SET critical_states = NULL WHERE diagram_id = :id", nativeQuery = true)
+    void clearCriticalStates(@Param("id") Integer id);
 }

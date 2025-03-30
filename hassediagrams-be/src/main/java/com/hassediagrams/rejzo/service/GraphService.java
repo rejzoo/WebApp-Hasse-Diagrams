@@ -24,45 +24,44 @@ public class GraphService {
     }
 
     /**
-     * Asynchronous master method for processing critical elements
+     * Asynchronous master method for processing critical states
      *
      * @param diagramId of diagram to calculate on
      * @param diagramData of diagram to calculate on
      */
     @Async
     @Transactional
-    public void processCriticalElements(Integer diagramId, DiagramData diagramData) {
+    public void processCriticalStates(Integer diagramId, DiagramData diagramData) {
         double start = (double) System.currentTimeMillis() / 1000;
-        System.out.println("ASYNC STARTED time: " + start);
 
         List<NodeDTO> nodes = diagramData.getNodes().stream()
                 .sorted(Comparator.comparingInt(NodeDTO::getLevel))
                 .toList();
-        List<EdgeDTO> edges = diagramData.getEdges().reversed();
+        List<EdgeDTO> edges = diagramData.getEdges();
+        Collections.reverse(edges);
 
-        Map<String, List<List<String>>> criticalNodes = findCriticalElements(nodes, edges);
+        Map<Integer, List<List<Integer>>> criticalNodes = findCriticalStates(nodes, edges);
 
-        int updatedRows = 0;
         try {
             String json = objectMapper.writeValueAsString(criticalNodes);
-            updatedRows = diagramRepository.updateCriticalElements(diagramId, json);
+            diagramRepository.updateCriticalElements(diagramId, json);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error converting DiagramData to JSON", e);
         }
 
-        System.out.println("ASYNC ENDED, UPDATED: " + updatedRows);
-        System.out.println("TIME: " + System.currentTimeMillis() + " | " + ((double) System.currentTimeMillis() / 1000 - start));
+        double elapsed = ((double) System.currentTimeMillis() / 1000 - start);
+        System.out.println("Duration of async method: " + String.format(Locale.US,"%.4f", elapsed) + "\n");
     }
 
     /**
-     * Finds all the critical elements and groups them by level in the hashmap
+     * Finds all the critical states and groups them by level in the hashmap
      *
      * @param nodes of the diagram
      * @param edges of the diagram
-     * @return HashMap of all critical elements grouped by level
+     * @return HashMap of all critical states grouped by level
      */
-    private Map<String, List<List<String>>> findCriticalElements(List<NodeDTO> nodes, List<EdgeDTO> edges) {
-        Map<String, List<List<String>>> criticalNodes = new HashMap<>();
+    private Map<Integer, List<List<Integer>>> findCriticalStates(List<NodeDTO> nodes, List<EdgeDTO> edges) {
+        Map<Integer, List<List<Integer>>> criticalNodes = new HashMap<>();
         int levels = nodes.getLast().getLevel();
 
         Map<String, NodeDTO> nodeMap = nodes.stream().collect(Collectors.toMap(NodeDTO::getId, node -> node));
@@ -77,7 +76,7 @@ public class GraphService {
 
             if (node.getLevel() - 1 == actualLevel) {
                 actualLevel = node.getLevel();
-                criticalNodes.put("" + actualLevel, new ArrayList<>());
+                criticalNodes.put(actualLevel, new ArrayList<>());
             }
 
             if (node.getFunctionality() == 0) {
@@ -97,7 +96,7 @@ public class GraphService {
             }
 
             if (isValid) {
-                criticalNodes.get("" + actualLevel).add(node.getFunctionalElements());
+                criticalNodes.get(actualLevel).add(node.getElements());
             }
         }
 
@@ -110,14 +109,16 @@ public class GraphService {
      * @param criticalNodes map to sort
      * @return sorted values in the map
      */
-    private Map<String, List<List<String>>> sortCriticalNodes(Map<String, List<List<String>>> criticalNodes) {
-        for (Map.Entry<String, List<List<String>>> entry : criticalNodes.entrySet()) {
-            List<List<String>> listOfLists = entry.getValue();
+    private Map<Integer, List<List<Integer>>> sortCriticalNodes(Map<Integer, List<List<Integer>>> criticalNodes) {
+        // This method might be useless in this implementation
+
+        for (Map.Entry<Integer, List<List<Integer>>> entry : criticalNodes.entrySet()) {
+            List<List<Integer>> listOfLists = entry.getValue();
             listOfLists.sort((list1, list2) -> {
                 int minSize = Math.min(list1.size(), list2.size());
                 for (int i = 0; i < minSize; i++) {
-                    int num1 = Integer.parseInt(list1.get(i).substring(1));
-                    int num2 = Integer.parseInt(list2.get(i).substring(1));
+                    int num1 = list1.get(i);
+                    int num2 = list2.get(i);
                     if (num1 != num2) {
                         return Integer.compare(num1, num2);
                     }

@@ -71,7 +71,7 @@ public class DiagramService {
         boolean saved = savedDiagram.getDiagram_id() != null;
 
         if (saved) {
-            graphService.processCriticalElements(savedDiagram.getDiagram_id(), savedDiagram.getDiagram_data());
+            graphService.processCriticalStates(savedDiagram.getDiagram_id(), savedDiagram.getDiagram_data());
         }
 
         return saved;
@@ -92,7 +92,8 @@ public class DiagramService {
 
             // TODO
             if (updated) {
-                graphService.processCriticalElements(id, data);
+                diagramRepository.clearCriticalStates(id);
+                graphService.processCriticalStates(id, data);
             }
 
             return updated;

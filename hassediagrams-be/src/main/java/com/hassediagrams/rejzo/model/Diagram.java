@@ -36,8 +36,8 @@ public class Diagram {
 
     @Type(JsonBinaryType.class)
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "critical_elements", columnDefinition = "jsonb")
-    private Map<String, List<List<String>>> criticalElements;
+    @Column(name = "critical_states", columnDefinition = "jsonb")
+    private Map<String, List<List<String>>> criticalStates;
 
     private Diagram() {}
 
