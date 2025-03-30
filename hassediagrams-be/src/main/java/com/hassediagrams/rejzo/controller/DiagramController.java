@@ -1,6 +1,7 @@
 package com.hassediagrams.rejzo.controller;
 
-import com.hassediagrams.rejzo.dto.DiagramData;
+import com.hassediagrams.rejzo.dto.DiagramDataDTO;
+import com.hassediagrams.rejzo.dto.DiagramInfoUpdateDTO;
 import com.hassediagrams.rejzo.dto.ElementDataWrapper;
 import com.hassediagrams.rejzo.model.Diagram;
 import com.hassediagrams.rejzo.service.DiagramService;
@@ -91,9 +92,29 @@ public class DiagramController {
      * @param data new data
      * @return returns status
      */
-    @PostMapping("/update/{id}")
-    public ResponseEntity<String> updateFunctionality(@PathVariable String id, @RequestBody DiagramData data) {
+    @PostMapping("/update/func/{id}")
+    public ResponseEntity<String> updateFunctionality(@PathVariable String id, @RequestBody DiagramDataDTO data) {
         boolean result = diagramService.updateDiagramFunctionality(Integer.valueOf(id), data);
+
+        String resultMessage = result ? "Diagram updated." : "Diagram not updated.";
+
+        if (result) {
+            return ResponseEntity.ok(resultMessage);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resultMessage);
+        }
+    }
+
+    /**
+     * Updates information for the diagram with id
+     *
+     * @param id diagram_id to be updated
+     * @param data new data
+     * @return returns status
+     */
+    @PostMapping("/update/info/{id}")
+    public ResponseEntity<String> updateInformation(@PathVariable String id, @RequestBody DiagramInfoUpdateDTO data) {
+        boolean result = diagramService.updateDiagramInformation(Integer.valueOf(id), data);
 
         String resultMessage = result ? "Diagram updated." : "Diagram not updated.";
 

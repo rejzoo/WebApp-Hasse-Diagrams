@@ -19,13 +19,15 @@ public class ElementDataWrapper {
     )
     private final String diagramName;
     private final int numberOfElements;
-    private final List<ElementData> elementData;
+    private final String visibility;
+    private final List<ElementDataDTO> elementDatumDTOS;
 
     @JsonCreator
-    public ElementDataWrapper(String diagramName, @JsonProperty("numberOfElements") int numberOfElements,
-                              @JsonProperty("data") List<ElementData> elementData) {
+    public ElementDataWrapper(String diagramName, @JsonProperty("numberOfElements") int numberOfElements, String visibility,
+                              @JsonProperty("data") List<ElementDataDTO> elementDatumDTOS) {
         this.diagramName = diagramName;
         this.numberOfElements = numberOfElements;
-        this.elementData = elementData;
+        this.visibility = visibility;
+        this.elementDatumDTOS = elementDatumDTOS;
     }
 }

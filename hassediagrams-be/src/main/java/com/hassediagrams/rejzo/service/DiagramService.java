@@ -49,14 +49,15 @@ public class DiagramService {
      * @return critical elements
      */
     public Map<String, List<List<String>>> findCriticalElements(Integer id) {
-        String json = diagramRepository.findCriticalElements(id);
+        String json = diagramRepository.findCriticalStates(id);
 
         if (json == null || json.trim().isEmpty()) {
             return new HashMap<>();
         }
 
         try {
-            return objectMapper.readValue(json, new TypeReference<>(){});
+            return objectMapper.readValue(json, new TypeReference<>() {
+            });
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error parsing critical elements", e);
         }
@@ -84,12 +85,12 @@ public class DiagramService {
     /**
      * Updates diagram with corresponding id
      *
-     * @param id for diagram to update
+     * @param id   for diagram to update
      * @param data which will be updated
      * @return returns number of updated rows
      */
     @Transactional
-    public boolean updateDiagramFunctionality(Integer id, DiagramData data) {
+    public boolean updateDiagramFunctionality(Integer id, DiagramDataDTO data) {
         try {
             String jsonStructure = objectMapper.writeValueAsString(data);
             boolean updated = 1 == diagramRepository.updateDiagramStructure(id, jsonStructure);
@@ -106,13 +107,31 @@ public class DiagramService {
     }
 
     /**
+     * Updates diagram information with corresponding id
+     *
+     * @param id   for diagram to update
+     * @param data which will be updated
+     * @return returns number of updated rows
+     */
+    @Transactional
+    public boolean updateDiagramInformation(Integer id, DiagramInfoUpdateDTO data) {
+        try {
+            String jsonStructure = objectMapper.writeValueAsString(data);
+            return 1 == diagramRepository.updateDiagramInformation(id, data.getDiagram_name(), data.getVisibility());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting DiagramData to JSON", e);
+        }
+    }
+
+    /**
      * Create list of nodes and edges
      *
      * @param data that contains user input about diagram
      * @return Diagram returns constructed diagram
      */
     private Diagram createDiagram(ElementDataWrapper data) {
-        return new Diagram(1, data.getDiagramName(), data.getNumberOfElements(), constructDiagramData(data));
+        return new Diagram(1, data.getDiagramName(), data.getNumberOfElements(),
+                data.getVisibility(), constructDiagramData(data));
     }
 
     /**
@@ -136,17 +155,17 @@ public class DiagramService {
      * Creates list of all nodes in the diagram
      *
      * @param numberOfRows self-describing
-     * @param data wrapper containing data for each row and number of elements
+     * @param data         wrapper containing data for each row and number of elements
      * @return list of nodes
      */
     private List<NodeDTO> constructNodes(int numberOfRows, ElementDataWrapper data) {
         List<NodeDTO> nodes = new ArrayList<>();
 
         for (int i = 0; i < numberOfRows; i++) {
-            ElementData elementData = data.getElementData().get(i);
-            String id = constructId(elementData.getElements());
-            List<Integer> elements = elementData.getElements();
-            int functionality = elementData.getSystem();
+            ElementDataDTO elementDataDTO = data.getElementDatumDTOS().get(i);
+            String id = constructId(elementDataDTO.getElements());
+            List<Integer> elements = elementDataDTO.getElements();
+            int functionality = elementDataDTO.getSystem();
 
             nodes.add(new NodeDTO(id, elements, functionality));
         }
@@ -211,13 +230,13 @@ public class DiagramService {
      * @param data needed to construct DiagramData
      * @return created instance of DiagramData
      */
-    private DiagramData constructDiagramData(ElementDataWrapper data) {
+    private DiagramDataDTO constructDiagramData(ElementDataWrapper data) {
         int numberOfElements = data.getNumberOfElements();
         int numberOfRows = (int) Math.pow(2, numberOfElements);
 
         List<NodeDTO> nodes = constructNodes(numberOfRows, data);
         List<EdgeDTO> edges = constructEdges(nodes);
 
-        return new DiagramData(nodes, edges);
+        return new DiagramDataDTO(nodes, edges);
     }
 }

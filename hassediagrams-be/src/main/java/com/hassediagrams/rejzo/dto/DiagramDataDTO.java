@@ -10,7 +10,7 @@ import java.util.List;
  */
 @AllArgsConstructor
 @Getter
-public class DiagramData {
+public class DiagramDataDTO {
     private List<NodeDTO> nodes;
     private List<EdgeDTO> edges;
 }

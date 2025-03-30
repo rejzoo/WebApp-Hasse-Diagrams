@@ -10,12 +10,12 @@ import java.util.Map;
  * Class representing data for 1 element for 1 combination
  */
 @Getter
-public class ElementData {
+public class ElementDataDTO {
     private List<Integer> elements;
     private Integer system;
 
     @JsonCreator
-    public ElementData(Map<String, Object> props) {
+    public ElementDataDTO(Map<String, Object> props) {
         for (Map.Entry<String, Object> entry : props.entrySet()) {
             if (entry.getKey().startsWith("elements")) {
                 this.elements = (List<Integer>) entry.getValue();

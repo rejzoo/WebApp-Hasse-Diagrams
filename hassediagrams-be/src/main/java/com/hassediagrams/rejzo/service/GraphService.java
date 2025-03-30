@@ -2,7 +2,7 @@ package com.hassediagrams.rejzo.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hassediagrams.rejzo.dto.DiagramData;
+import com.hassediagrams.rejzo.dto.DiagramDataDTO;
 import com.hassediagrams.rejzo.dto.EdgeDTO;
 import com.hassediagrams.rejzo.dto.NodeDTO;
 import com.hassediagrams.rejzo.repository.DiagramRepository;
@@ -27,24 +27,24 @@ public class GraphService {
      * Asynchronous master method for processing critical states
      *
      * @param diagramId of diagram to calculate on
-     * @param diagramData of diagram to calculate on
+     * @param diagramDataDTO of diagram to calculate on
      */
     @Async
     @Transactional
-    public void processCriticalStates(Integer diagramId, DiagramData diagramData) {
+    public void processCriticalStates(Integer diagramId, DiagramDataDTO diagramDataDTO) {
         double start = (double) System.currentTimeMillis() / 1000;
 
-        List<NodeDTO> nodes = diagramData.getNodes().stream()
+        List<NodeDTO> nodes = diagramDataDTO.getNodes().stream()
                 .sorted(Comparator.comparingInt(NodeDTO::getLevel))
                 .toList();
-        List<EdgeDTO> edges = diagramData.getEdges();
+        List<EdgeDTO> edges = diagramDataDTO.getEdges();
         Collections.reverse(edges);
 
         Map<Integer, List<List<Integer>>> criticalNodes = findCriticalStates(nodes, edges);
 
         try {
             String json = objectMapper.writeValueAsString(criticalNodes);
-            diagramRepository.updateCriticalElements(diagramId, json);
+            diagramRepository.updateCriticalStates(diagramId, json);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error converting DiagramData to JSON", e);
         }
