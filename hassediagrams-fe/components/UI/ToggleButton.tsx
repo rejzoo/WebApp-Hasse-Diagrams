@@ -1,50 +1,36 @@
-import React, { useState } from "react";
+"use client";
+
+import React from "react";
 
 interface ToggleButtonProps {
-  onToggle?: (state: boolean) => void;
+  value: string;
+  setValue: (newValue: string) => void;
+  option1: string;
+  option2: string;
+  className?: string;
+  activeClass?: string;
+  inactiveClass?: string;
 }
 
-export default function ToggleButton({ onToggle }: ToggleButtonProps) {
-  const [editing, setEditing] = useState<boolean>(false);
-
-  const handleToggle = (state: boolean) => {
-    setEditing(state);
-    if (onToggle) {
-      onToggle(state);
-    }
+export default function ToggleButton({
+  value,
+  setValue,
+  option1,
+  option2,
+  className = "",
+  activeClass = "bg-red-500 text-white",
+  inactiveClass = "bg-green-500 text-white",
+}: ToggleButtonProps) {
+  const handleToggle = () => {
+    setValue(value === option1 ? option2 : option1);
   };
 
   return (
-    <div>
-      <div>
-        <span>Mode:</span>
-      </div>
-      <div className="flex w-48 rounded-md overflow-hidden text-white">
-        <button
-          onClick={() => handleToggle(false)}
-          className={`flex-1 py-2 text-center transition-colors 
-                focus:outline-none focus:ring-0 focus:shadow-none appearance-none
-                ${
-                  editing === false
-                    ? "bg-red-500"
-                    : "bg-[var(--itemsbackground)]"
-                }`}
-        >
-          View
-        </button>
-        <button
-          onClick={() => handleToggle(true)}
-          className={`flex-1 py-2 text-center transition-colors 
-                focus:outline-none focus:ring-0 focus:shadow-none appearance-none
-                ${
-                  editing === true
-                    ? "bg-red-500"
-                    : "bg-[var(--itemsbackground)]"
-                }`}
-        >
-          Edit
-        </button>
-      </div>
-    </div>
+    <button
+      onClick={handleToggle}
+      className={`px-4 py-2 rounded-md transition-colors ${value === option1 ? activeClass : inactiveClass} ${className}`}
+    >
+      {value === option1 ? option1 : option2}
+    </button>
   );
 }

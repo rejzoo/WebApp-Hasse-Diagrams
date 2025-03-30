@@ -21,9 +21,10 @@ export interface Diagram {
     user_id: number;
     diagram_name: string;
     diagram_elements_count: number;
+    visibility: string;
     diagram_data: DiagramData;
 }
 
-export interface CriticalElements {
-    [key: string]: string[][];
+export interface CriticalStates {
+    [key: number]: number[][];
 }

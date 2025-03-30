@@ -31,7 +31,7 @@ export function calculateCombinations(numberOfElements: number): number[][] {
     }
     combinations.push(combo);
   }
-  return combinations;
+  return combinations.reverse();
 }
 
 /**

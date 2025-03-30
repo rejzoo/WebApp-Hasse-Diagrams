@@ -34,7 +34,7 @@ export default function DiagramsPage() {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-wrap justify-center items-center gap-4">
       {diagramData ? (
         diagramData.map((diagram) => (
           <HasseDiagramCard
@@ -48,7 +48,7 @@ export default function DiagramsPage() {
           />
         ))
       ) : (
-        <p>Loading diagrams...</p>
+        <p>No diagrams :{"("}</p>
       )}
     </div>
   );

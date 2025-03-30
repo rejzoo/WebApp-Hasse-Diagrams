@@ -2,10 +2,11 @@
 
 import HasseDiagram from "@/components/Diagram/HasseDiagram";
 import { use, useEffect, useRef, useState } from "react";
-import { CriticalElements, Diagram, DiagramData } from "@/types/diagram";
-import ToggleButton from "@/components/UI/ToggleButton";
+import { CriticalStates, Diagram, DiagramData } from "@/types/diagram";
+import ToggleButtons from "@/components/UI/ToggleButtons";
 import Collapsible from "@/components/UI/Collapsible";
-import CriticalElementsLevel from "@/components/Diagram/CriticalElementsLevel";
+import CriticalStatesLevel from "@/components/Diagram/CriticalElementsLevel";
+import EditableField from "@/components/UI/EditableField";
 
 export default function DiagramPage({
   params,
@@ -17,13 +18,49 @@ export default function DiagramPage({
   const [editing, setEditing] = useState<boolean>(false);
   const [responseMsg, setResponseMsg] = useState<String>("");
   const [responseErr, setResponseErr] = useState<boolean>(false);
-  const [criticalElements, setCriticalElements] =
-    useState<CriticalElements | null>(null);
+  const [criticalStates, setCriticalElements] = useState<CriticalStates | null>(
+    null
+  );
 
   const baselineDiagramRef = useRef<Diagram | null>(null);
+  const retriedRef = useRef(false);
 
   const handleToggle = (state: boolean) => {
     setEditing(state);
+  };
+
+  const fetchCriticalElements = async () => {
+    const delay: number = 5000;
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/critElements/${id}`,
+        {
+          method: "GET",
+        }
+      );
+
+      const data: CriticalStates = await response.json();
+
+      if (!data || Object.keys(data).length === 0) {
+        setCriticalElements(null);
+        if (!retriedRef.current) {
+          retriedRef.current = true;
+          setTimeout(fetchCriticalElements, delay);
+        }
+      } else {
+        setCriticalElements(data);
+      }
+
+      console.log(data);
+    } catch (error: any) {
+      console.error("Error fetching critical elements:", error);
+      setCriticalElements(null);
+      if (!retriedRef.current) {
+        retriedRef.current = true;
+        setTimeout(fetchCriticalElements, delay);
+      }
+    }
   };
 
   useEffect(() => {
@@ -44,21 +81,6 @@ export default function DiagramPage({
       } catch (error) {
         console.error("Error fetching diagram:", error);
       }
-    };
-
-    // TODO
-    const fetchCriticalElements = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/critElements/${id}`,
-          {
-            method: "GET",
-          }
-        );
-        const data: CriticalElements = await response.json();
-        setCriticalElements(data);
-        console.log(data);
-      } catch (error: any) {}
     };
 
     fetchDiagrams();
@@ -95,7 +117,7 @@ export default function DiagramPage({
         const strippedData = prepareDiagramData(diagram.diagram_data);
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/update/${id}`,
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/update/func/${id}`,
           {
             method: "POST",
             headers: {
@@ -126,27 +148,85 @@ export default function DiagramPage({
         setResponseErr(true);
       }
     }
+
+    retriedRef.current = false;
+    fetchCriticalElements();
   };
 
   const cancelEdit = () => {
     setDiagram(JSON.parse(JSON.stringify(baselineDiagramRef.current)));
   };
 
+  const updateInformation = async (newDiagramName: string, newVisibility: string) => {
+    if (!diagram) {
+      return;
+    }
+
+    console.log("NAME ", diagram?.diagram_name);
+    try {
+      const data = {
+        diagram_name: newDiagramName,
+        visibility: newVisibility,
+      };
+
+      console.log(data);
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/update/info/${id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Update successful");
+      } else {
+        console.error("Update failed", await response.text());
+      }
+    } catch (error) {
+      console.error("Error updating information:", error);
+    }
+  };
+
   return (
     <div className="space-y-10">
       <Collapsible title="Diagram information" opened={false}>
-        <div className="flex flex-row space-x-10 text-ml font-mono">
+        <div className="flex flex-row space-x-10 text-xl font-mono">
           <div className="flex flex-col">
             <p>Diagram name:</p>
             <p>Created by:</p>
+            <p>Visibility:</p>
             <p>Number of elements:</p>
             <p>Number of nodes:</p>
             <p>Number of edges:</p>
           </div>
 
           <div className="flex flex-col">
-            <p>{diagram?.diagram_name}</p>
+            <EditableField
+              value={diagram?.diagram_name || ""}
+              onChange={(newName) => {
+                setDiagram((prev) =>
+                  prev ? { ...prev, diagram_name: newName } : prev
+                );
+                updateInformation(newName, diagram?.visibility || "");
+              }}
+            />
             <p>{diagram?.user_id}</p>
+            <EditableField
+              value={diagram?.visibility || ""}
+              controlType="dropdown"
+              options={["private", "public"]}
+              onChange={(newVisibility) => {
+                setDiagram((prev) =>
+                  prev ? { ...prev, visibility: newVisibility } : prev
+                );
+                updateInformation(diagram?.diagram_name || "", newVisibility);
+              }}
+            />
             <p>{diagram?.diagram_elements_count}</p>
             <p>{diagram?.diagram_data.nodes.length}</p>
             <p>{diagram?.diagram_data.edges.length}</p>
@@ -159,7 +239,11 @@ export default function DiagramPage({
         baselineDiagramRef.current?.diagram_elements_count <= 6 ? (
           <>
             <div className="flex pb-8 justify-between">
-              <ToggleButton onToggle={handleToggle} />
+              <ToggleButtons
+                onToggle={handleToggle}
+                firstState="View"
+                secondsState="Edit"
+              />
               <div className="mt-auto space-x-4">
                 <button
                   onClick={handleSave}
@@ -216,16 +300,19 @@ export default function DiagramPage({
         )}
       </Collapsible>
 
-      <Collapsible title="Critical elements" opened={false}>
+      <Collapsible title="Critical states" opened={false}>
         <div className="font-mono text-ml">
-          {criticalElements &&
-            Object.entries(criticalElements).map(([level, elementsList]) => (
-              <CriticalElementsLevel
+          {criticalStates ? (
+            Object.entries(criticalStates).map(([level, elementsList]) => (
+              <CriticalStatesLevel
                 key={level}
                 level={level}
                 elements={elementsList}
               />
-            ))}
+            ))
+          ) : (
+            <p>No critical states available. Trying again in 5 seconds.</p>
+          )}
         </div>
       </Collapsible>
     </div>

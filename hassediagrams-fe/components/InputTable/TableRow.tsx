@@ -27,7 +27,6 @@ export default function TableRow({
   onSystemClick,
   highlight,
 }: TableRowProps) {
-  console.log(row.elements);
   return (
     <tr className="hover:bg-[var(--itemsbackground)]/10 transition-colors">
       <td className="sticky left-0 bg-[var(--itemsbackground)] w-10 text-center align-middle">

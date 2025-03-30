@@ -10,6 +10,8 @@ import {
   allSystemInputFilled,
 } from "@/utils/tableUtils";
 import { RowData } from "@/types/table";
+import ToggleButton from "../UI/ToggleButton";
+import ToggleButtonBoolean from "../UI/ToggleButton";
 
 interface TableProps {
   numberOfElements: number;
@@ -32,6 +34,7 @@ export default function InputTable({
   const [diagramName, setDiagramName] = useState<string>("");
   const [error, setError] = useState(false);
   const [highlightSystem, setHighlightSystem] = useState(false);
+  const [visibility, setVisibility] = useState<string>("private");
 
   useEffect(() => {
     setRows(calculateRows(numberOfElements));
@@ -74,7 +77,6 @@ export default function InputTable({
   const validInput = () => {
     setResponseMsg("");
 
-    // Consult this
     let result = true;
     if (!isValidName(diagramName)) {
       if (inputRef.current) {
@@ -113,6 +115,7 @@ export default function InputTable({
     const finalData = {
       diagramName,
       numberOfElements,
+      visibility,
       data,
     };
 
@@ -127,8 +130,6 @@ export default function InputTable({
           body: JSON.stringify(finalData),
         }
       );
-
-      // console.log(JSON.stringify(finalData));
 
       if (response.ok) {
         const res = await response.text();
@@ -193,6 +194,16 @@ export default function InputTable({
           >
             1
           </button>
+        </div>
+        
+        <div className="space-x-4">
+          <span className="text-xl">Visibility of diagram</span>
+          <ToggleButton
+            value={visibility}
+            setValue={setVisibility}
+            option1="private"
+            option2="public"
+          />
         </div>
       </div>
 

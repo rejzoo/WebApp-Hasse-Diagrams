@@ -16,7 +16,7 @@ export default function Collapsible({ title, opened, children }: CollProbs) {
         className="w-full py-2 px-4 bg-[var(--itemsbackground)] rounded-md flex items-center space-x-2 font-bold hover:bg-[#26233d]"
       >
         <span>{isVisible ? "▲" : "▼"}</span>
-        <span>{title}</span>
+        <span className="text-xl">{title}</span>
       </button>
       <div
         className={`overflow-hidden transition-all duration-500 ease-in-out ${
