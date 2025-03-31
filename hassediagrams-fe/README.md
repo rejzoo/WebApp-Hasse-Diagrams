@@ -30,7 +30,7 @@ Before getting started, make sure you have the following installed:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/hassediagrams-fe.git
+   git clone https://github.com/rejzoo/hassediagrams-fe.git
    cd hassediagrams-fe
 
 2. **Install dependencies:**
