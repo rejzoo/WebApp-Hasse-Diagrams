@@ -30,7 +30,7 @@ Before getting started, make sure you have the following installed:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/rejzoo/hassediagrams-fe.git
+   git clone https://github.com/rejzoo/WebApp-Hasse-Diagrams.git
    cd hassediagrams-fe
 
 2. **Install dependencies:**
