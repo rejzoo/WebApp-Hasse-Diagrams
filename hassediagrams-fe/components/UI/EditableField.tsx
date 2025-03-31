@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { isValidName } from "@/utils/tableUtils";
+import React, { useState, useEffect, useRef } from "react";
 import { CiEdit } from "react-icons/ci";
 
 export type ControlType = "text" | "dropdown";
@@ -19,16 +20,28 @@ export default function EditableField({
   options = [],
 }: EditableFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [internalValue, setInternalValue] = useState(value);
-
+  const [internalValue, setInternalValue] = useState<string>(value);
+  const [hasError, setHasError] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  
   useEffect(() => {
     setInternalValue(value);
   }, [value]);
 
   const toggleEditing = () => {
-    if (isEditing && onChange) {
-      onChange(internalValue);
+    if (isEditing) {
+      if (controlType === "text" && !isValidName(internalValue)) {
+        setHasError(true);
+        inputRef.current?.focus();
+        return;
+      }
+
+      if (onChange) {
+        setHasError(false);
+        onChange(internalValue);
+      }
     }
+
     setIsEditing(!isEditing);
   };
 
@@ -49,10 +62,13 @@ export default function EditableField({
           </select>
         ) : (
           <input
+            ref={inputRef}
             type="text"
             value={internalValue}
             onChange={(e) => setInternalValue(e.target.value)}
-            className="rounded-md h-8 px-2 max-w-56 text-white bg-[var(--itemsbackground)] focus:outline-none focus:ring-1"
+            className={`rounded-md h-8 px-2 max-w-56 text-white bg-[var(--itemsbackground)] focus:outline-none focus:ring-1 ${
+              hasError ? "border-2 border-red-500" : ""
+            }`}
           />
         )
       ) : (
