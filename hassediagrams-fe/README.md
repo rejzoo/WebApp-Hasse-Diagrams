@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hasse Diagrams Frontend
 
-## Getting Started
+This is the frontend service for the Hasse Diagrams application. It is built using Next.js, React, and D3 for data visualization, and styled with Tailwind CSS. This project is configured for development, building, and production deployment using the Next.js framework.
 
-First, run the development server:
+## Table of Contents
+
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Development](#development)
+- [Building and Running in Production](#building-and-running-in-production)
+- [Scripts](#scripts)
+- [Dependencies](#dependencies)
+
+## Overview
+
+This project is the frontend component for the Hasse Diagrams application. It uses:
+- **Next.js** for server-side rendering and routing.
+- **React** for building user interfaces.
+- **D3.js** for data visualizations.
+- **Tailwind CSS** for utility-first styling.
+
+## Prerequisites
+
+Before getting started, make sure you have the following installed:
+- [Node.js](https://nodejs.org/) (v14 or later recommended)
+- [npm](https://www.npmjs.com/) (or [Yarn](https://yarnpkg.com/) if preferred)
+
+## Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/hassediagrams-fe.git
+   cd hassediagrams-fe
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+## Development
+To start the development server with hot reloading, run:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will launch the application at http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Building and Running in Production
+To build the application for production, run:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+```
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+After the build is complete, you can start the production server with:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The production server will run at http://localhost:3000.
 
-## Deploy on Vercel
+## Scripts
+The following scripts are defined in the package.json:
+- **dev**: Runs the Next.js development server.
+- **build**: Builds the application for production.
+- **start**: Starts the production server.
+- **lint**: Runs ESLint to check for code issues.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Dependencies
+### Runtime Dependencies
+- next: Framework for server-side rendering.
+- react: UI library.
+- react-dom: DOM-specific methods for React.
+- d3: Library for data visualizations.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Development Dependencies
+- @eslint/eslintrc: ESLint configuration.
+- @types/d3: TypeScript definitions for D3.
+- @types/node: TypeScript definitions for Node.js.
+- @types/react: TypeScript definitions for React.
+- @types/react-dom: TypeScript definitions for ReactDOM.
+- eslint: Pluggable linting utility.
+- eslint-config-next: ESLint configuration for Next.js.
+- postcss: Tool for transforming CSS.
+- tailwindcss: Utility-first CSS framework.
+- typescript: Superset of JavaScript for static typing.
