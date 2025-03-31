@@ -21,11 +21,11 @@ This project is divided into two main parts:
 
 ## Backend Setup
 
-For detailed setup instructions and configuration examples please refer to our [BE Setup Guide](https://github.com/rejzoo/WebApp-Hasse-Diagrams/tree/main/hassediagrams-be).
+For detailed setup instructions and configuration examples please refer to our [BE Setup Guide](https://github.com/rejzoo/WebApp-Hasse-Diagrams/tree/main/hassediagrams-be#installation-and-setup).
 
 
 ## Frontend Setup
-For detailed setup instructions please refer to our [FE Setup guide](https://github.com/rejzoo/WebApp-Hasse-Diagrams/tree/main/hassediagrams-fe).
+For detailed setup instructions please refer to our [FE Setup guide](https://github.com/rejzoo/WebApp-Hasse-Diagrams/tree/main/hassediagrams-fe#installation).
 
 ## User Manual
 TODO
