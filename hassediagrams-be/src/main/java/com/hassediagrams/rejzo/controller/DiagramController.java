@@ -47,10 +47,10 @@ public class DiagramController {
      * @return diagram json data
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Diagram>> fetchDiagram(@PathVariable String id) {
-        Optional<Diagram> json = diagramService.findDiagram(Integer.valueOf(id));
-
-        return ResponseEntity.ok(json);
+    public ResponseEntity<Diagram> fetchDiagram(@PathVariable String id) {
+        return diagramService.findDiagram(Integer.valueOf(id))
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
