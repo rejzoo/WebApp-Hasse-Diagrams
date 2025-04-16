@@ -15,8 +15,7 @@ import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -47,11 +46,15 @@ public class DiagramControllerTest {
     @Test
     public void testFetchDiagram() throws Exception {
         Diagram diagram = mock(Diagram.class);
-        when(diagramService.findDiagram(1)).thenReturn(Optional.of(diagram));
+        Integer id = 1;
+
+        when(diagramService.findDiagram(id)).thenReturn(Optional.of(diagram));
 
         mockMvc.perform(get("/api/diagrams/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
+
+        verify(diagramService).findDiagram(id);
     }
 
     @Test
