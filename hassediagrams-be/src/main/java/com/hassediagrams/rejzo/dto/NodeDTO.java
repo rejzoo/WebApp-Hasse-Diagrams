@@ -23,14 +23,14 @@ public class NodeDTO {
      */
     @JsonIgnore
     public int getLevel() {
-        int numberOfZeros = 1;
+        int level = 1;
 
-        for (Integer functionality : elements) {
-            if (functionality == 0) {
-                numberOfZeros++;
+        for (Integer element_Functionality : elements) {
+            if (element_Functionality == 0) {
+                level++;
             }
         }
 
-        return numberOfZeros;
+        return level;
     }
 }

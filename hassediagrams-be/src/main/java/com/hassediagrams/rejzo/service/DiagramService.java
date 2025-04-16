@@ -38,9 +38,7 @@ public class DiagramService {
      * @param id of the diagram
      * @return diagram with param id
      */
-    public Optional<Diagram> findDiagram(Integer id) {
-        return diagramRepository.findById(id);
-    }
+    public Optional<Diagram> findDiagram(Integer id) { return diagramRepository.findById(id); }
 
     /**
      * Finds critical elements
@@ -115,12 +113,7 @@ public class DiagramService {
      */
     @Transactional
     public boolean updateDiagramInformation(Integer id, DiagramInfoUpdateDTO data) {
-        try {
-            String jsonStructure = objectMapper.writeValueAsString(data);
-            return 1 == diagramRepository.updateDiagramInformation(id, data.getDiagram_name(), data.getVisibility());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error converting DiagramData to JSON", e);
-        }
+        return 1 == diagramRepository.updateDiagramInformation(id, data.getDiagram_name(), data.getVisibility());
     }
 
     /**
@@ -162,7 +155,7 @@ public class DiagramService {
         List<NodeDTO> nodes = new ArrayList<>();
 
         for (int i = 0; i < numberOfRows; i++) {
-            ElementDataDTO elementDataDTO = data.getElementDatumDTOS().get(i);
+            ElementDataDTO elementDataDTO = data.getElementDataDTOS().get(i);
             String id = constructId(elementDataDTO.getElements());
             List<Integer> elements = elementDataDTO.getElements();
             int functionality = elementDataDTO.getSystem();

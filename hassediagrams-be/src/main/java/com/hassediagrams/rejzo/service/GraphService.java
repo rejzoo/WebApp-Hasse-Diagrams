@@ -62,7 +62,7 @@ public class GraphService {
      */
     private Map<Integer, List<List<Integer>>> findCriticalStates(List<NodeDTO> nodes, List<EdgeDTO> edges) {
         Map<Integer, List<List<Integer>>> criticalNodes = new HashMap<>();
-        int levels = nodes.getLast().getLevel();
+        int levels = nodes.get(nodes.size() - 1).getLevel();
 
         Map<String, NodeDTO> nodeMap = nodes.stream().collect(Collectors.toMap(NodeDTO::getId, node -> node));
 
