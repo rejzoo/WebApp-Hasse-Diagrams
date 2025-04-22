@@ -81,6 +81,21 @@ public class DiagramService {
     }
 
     /**
+     * Deletes diagram from database
+     *
+     * @param id of the diagram
+     * @return boolean value
+     */
+    public boolean deleteDiagram(Integer id) {
+        if (!diagramRepository.existsById(id)) {
+            return false;
+        }
+
+        diagramRepository.deleteById(id);
+        return true;
+    }
+
+    /**
      * Updates diagram with corresponding id
      *
      * @param id   for diagram to update

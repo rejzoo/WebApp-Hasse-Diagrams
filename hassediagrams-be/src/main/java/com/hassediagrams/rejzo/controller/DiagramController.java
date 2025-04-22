@@ -86,6 +86,24 @@ public class DiagramController {
     }
 
     /**
+     * Deletes the diagram with id
+     *
+     * @param id of the diagram to delete
+     * @return the result of the operation
+     */
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<String> deleteDiagram(@PathVariable String id) {
+        boolean result = diagramService.deleteDiagram(Integer.valueOf(id));
+
+        String resultMessage = result ? "Diagram deleted." : "Diagram was not deleted.";
+
+        if (result) {
+            return ResponseEntity.ok(resultMessage);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resultMessage);
+        }
+    }
+    /**
      * Updates functionality for the diagram with id
      *
      * @param id diagram_id to be updated

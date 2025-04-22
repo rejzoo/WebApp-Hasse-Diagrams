@@ -130,7 +130,8 @@ export default function InputTable({
           body: JSON.stringify(finalData),
         }
       );
-
+      console.log(finalData);
+console.log(JSON.stringify(finalData));
       if (response.ok) {
         const res = await response.text();
         setResponseMsg(res);

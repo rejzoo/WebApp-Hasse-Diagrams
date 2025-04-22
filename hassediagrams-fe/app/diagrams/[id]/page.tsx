@@ -9,6 +9,7 @@ import CriticalStatesLevel from "@/components/Diagram/CriticalElementsLevel";
 import EditableField from "@/components/UI/EditableField";
 import EditTable from "@/components/EditTable/EditTable";
 import { isDiagramChanged } from "@/utils/tableUtils";
+import { useRouter } from 'next/navigation';
 
 export default function DiagramPage({
   params,
@@ -23,6 +24,7 @@ export default function DiagramPage({
   const [criticalStates, setCriticalElements] = useState<CriticalStates | null>(
     null
   );
+  const router = useRouter();
 
   const baselineDiagramRef = useRef<Diagram | null>(null);
   const retriedRef = useRef(false);
@@ -182,6 +184,34 @@ export default function DiagramPage({
     }
   };
 
+  const deleteDiagram = async () => {
+    const confirmed = window.confirm("Are you sure you want to delete this diagram?");
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/delete/${id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }
+      );
+
+      if (response.ok) {
+        console.log("Delete successful");
+        router.push('/diagrams');
+      } else {
+        console.error("Delete failed", await response.text());
+      }
+    } catch (error) {
+      console.error("Error deleting information:", error);
+    }
+  }
+
   return (
     <div className="space-y-10">
       <Collapsible title="Diagram information" opened={false}>
@@ -221,6 +251,12 @@ export default function DiagramPage({
             <p>{diagram?.diagram_data.nodes.length}</p>
             <p>{diagram?.diagram_data.edges.length}</p>
           </div>
+
+        </div>
+        <div className="text-xl font-mono pt-4">
+          <button 
+            className="items-center py-2 px-2 rounded-md bg-red-500 hover:bg-red-600"
+            onClick={deleteDiagram}>DELETE DIAGRAM</button>
         </div>
       </Collapsible>
 
