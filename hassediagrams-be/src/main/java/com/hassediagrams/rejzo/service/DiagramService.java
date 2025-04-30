@@ -163,7 +163,7 @@ public class DiagramService {
      * Creates list of all nodes in the diagram
      *
      * @param numberOfRows self-describing
-     * @param data         wrapper containing data for each row and number of elements
+     * @param data wrapper containing data for each row and number of elements
      * @return list of nodes
      */
     private List<NodeDTO> constructNodes(int numberOfRows, ElementDataWrapper data) {
