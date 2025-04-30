@@ -22,13 +22,13 @@ export default function Home() {
           powerful tools and dive into your reliability analysis.
         </p>
         <div className="flex flex-row justify-center space-x-10">
-          <NavItem name="Register now!" link="/register" />
+          <NavItem name="Register now!" link="/register" disabled={true} />
         </div>
         <p className="text-lg">
           Already a member? Log in to continue and explore your diagrams.
         </p>
         <div className="flex flex-row justify-center space-x-10">
-          <NavItem name="Sign in" link="/signin" />
+          <NavItem name="Sign in" link="/signin" disabled={true} />
         </div>
       </div>
     </div>

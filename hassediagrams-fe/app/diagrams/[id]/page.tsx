@@ -9,7 +9,7 @@ import CriticalStatesLevel from "@/components/Diagram/CriticalElementsLevel";
 import EditableField from "@/components/UI/EditableField";
 import EditTable from "@/components/EditTable/EditTable";
 import { isDiagramChanged } from "@/utils/tableUtils";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function DiagramPage({
   params,
@@ -154,14 +154,11 @@ export default function DiagramPage({
       return;
     }
 
-    console.log("NAME ", diagram?.diagram_name);
     try {
       const data = {
         diagram_name: newDiagramName,
         visibility: newVisibility,
       };
-
-      console.log(data);
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/diagrams/update/info/${id}`,
@@ -185,7 +182,9 @@ export default function DiagramPage({
   };
 
   const deleteDiagram = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete this diagram?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this diagram?"
+    );
     if (!confirmed) {
       return;
     }
@@ -197,20 +196,20 @@ export default function DiagramPage({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-          }
+          },
         }
       );
 
       if (response.ok) {
         console.log("Delete successful");
-        router.push('/diagrams');
+        router.push("/diagrams");
       } else {
         console.error("Delete failed", await response.text());
       }
     } catch (error) {
       console.error("Error deleting information:", error);
     }
-  }
+  };
 
   return (
     <div className="space-y-10">
@@ -251,12 +250,14 @@ export default function DiagramPage({
             <p>{diagram?.diagram_data.nodes.length}</p>
             <p>{diagram?.diagram_data.edges.length}</p>
           </div>
-
         </div>
         <div className="text-xl font-mono pt-4">
-          <button 
+          <button
             className="items-center py-2 px-2 rounded-md bg-red-500 hover:bg-red-600"
-            onClick={deleteDiagram}>DELETE DIAGRAM</button>
+            onClick={deleteDiagram}
+          >
+            DELETE DIAGRAM
+          </button>
         </div>
       </Collapsible>
 

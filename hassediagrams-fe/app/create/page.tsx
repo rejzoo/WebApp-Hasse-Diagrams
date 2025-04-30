@@ -18,6 +18,7 @@ export default function CreatePage() {
             checked={manualElementsInput}
             onChange={(e) => setManualElementsInput(e.target.checked)}
             style={{ transform: "scale(1.5)" }}
+            disabled={true}
           />
         </div>
 

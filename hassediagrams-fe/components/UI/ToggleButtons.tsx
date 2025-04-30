@@ -6,7 +6,11 @@ interface ToggleButtons {
   secondsState: string;
 }
 
-export default function ToggleButtons({ onToggle, firstState, secondsState }: ToggleButtons) {
+export default function ToggleButtons({
+  onToggle,
+  firstState,
+  secondsState,
+}: ToggleButtons) {
   const [editing, setEditing] = useState<boolean>(false);
 
   const handleToggle = (state: boolean) => {

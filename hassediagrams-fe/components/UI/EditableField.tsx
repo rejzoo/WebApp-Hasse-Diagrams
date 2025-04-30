@@ -23,7 +23,7 @@ export default function EditableField({
   const [internalValue, setInternalValue] = useState<string>(value);
   const [hasError, setHasError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   useEffect(() => {
     setInternalValue(value);
   }, [value]);

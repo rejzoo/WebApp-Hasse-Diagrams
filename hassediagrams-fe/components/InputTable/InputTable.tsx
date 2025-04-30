@@ -130,8 +130,7 @@ export default function InputTable({
           body: JSON.stringify(finalData),
         }
       );
-      console.log(finalData);
-console.log(JSON.stringify(finalData));
+
       if (response.ok) {
         const res = await response.text();
         setResponseMsg(res);
@@ -196,7 +195,7 @@ console.log(JSON.stringify(finalData));
             1
           </button>
         </div>
-        
+
         <div className="space-x-4">
           <span className="text-xl">Visibility of diagram</span>
           <ToggleButton

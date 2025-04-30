@@ -28,7 +28,10 @@ export default function ToggleButton({
   return (
     <button
       onClick={handleToggle}
-      className={`px-4 py-2 rounded-md transition-colors ${value === option1 ? activeClass : inactiveClass} ${className}`}
+      className={`px-4 py-2 rounded-md transition-colors ${
+        value === option1 ? activeClass : inactiveClass
+      } ${className}`}
+      disabled={true}
     >
       {value === option1 ? option1 : option2}
     </button>

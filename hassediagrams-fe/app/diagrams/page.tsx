@@ -19,8 +19,6 @@ export default function DiagramsPage() {
 
         const result = await response.json();
 
-        console.log("GET", result);
-
         const transformed: Diagram[] = result.map(
           (diagramObj: any) => diagramObj
         );
